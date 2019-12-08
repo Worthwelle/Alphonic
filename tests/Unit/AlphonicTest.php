@@ -77,40 +77,33 @@ NATO;
         $this->assertEquals($alphonic->get_string("nato", "NATO"), "November Alfa Tango Oscar");
     }
     
-    public function testLoadAlphabetFromJSON() {
+    public function testAddAlphabetFromJSON() {
         $alphonic = new Alphonic();
-        $alphonic->load_alphabet_from_json($nato_json);
+        $alphonic->add_alphabet_from_json($this->nato_json);
         $this->assertEquals($alphonic->get_title("nato"), "NATO Phonetic Alphabet");
     }
     
-    public function testLoadAlphabetFromFile() {
+    public function testAddAlphabetFromFile() {
         $alphonic = new Alphonic();
-        $alphonic->load_alphabet_from_file(__DIR__.'/../alphabets/nato.json');
+        $alphonic->add_alphabet_from_file(__DIR__.'/../../alphabets/nato.json');
         $this->assertEquals($alphonic->get_title("nato"), "NATO Phonetic Alphabet");
     }
     
     public function testGetTitle() {
         $alphonic = new Alphonic();
-        $alphonic->load_alphabet_from_json($nato_json);
+        $alphonic->add_alphabet_from_json($this->nato_json);
         $this->assertEquals($alphonic->get_title("nato"), "NATO Phonetic Alphabet");
     }
     
     public function testGetDescription() {
         $alphonic = new Alphonic();
-        $alphonic->load_alphabet_from_json($nato_json);
+        $alphonic->add_alphabet_from_json($this->nato_json);
         $this->assertEquals($alphonic->get_description("nato"), "The most widely used radiotelephone spelling alphabet. It is officially the International Radiotelephony Spelling Alphabet, and also commonly known as the ICAO phonetic alphabet, with a variation officially known as the ITU phonetic alphabet and figure code.");
     }
     
     public function testGetSource() {
         $alphonic = new Alphonic();
-        $alphonic->load_alphabet_from_json($nato_json);
+        $alphonic->add_alphabet_from_json($this->nato_json);
         $this->assertEquals($alphonic->get_source("nato"), "https://www.icao.int/Pages/AlphabetRadiotelephony.aspx");
     }
-
-
-
-
-
-
-
 }
