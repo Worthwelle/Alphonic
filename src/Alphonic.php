@@ -33,6 +33,14 @@ class Alphonic {
         return $this->alphabets[strtoupper($alpha)]->get_title();
     }
     
+    public function get_description($alpha) {
+        return $this->alphabets[strtoupper($alpha)]->get_description();
+    }
+    
+    public function get_source($alpha) {
+        return $this->alphabets[strtoupper($alpha)]->get_source();
+    }
+    
     public function get_string($string, $alpha, $ipa = false) {
         return $this->alphabets[strtoupper($alpha)]->get_string($string, $ipa);
     }
