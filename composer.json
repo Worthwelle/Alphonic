@@ -31,5 +31,8 @@
         "psr-4": {
             "Tests\\": "tests/"
         }
+    },
+    "require": {
+        "justinrainbow/json-schema": "^5.2"
     }
 }
