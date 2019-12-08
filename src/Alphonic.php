@@ -30,19 +30,33 @@ class Alphonic {
     }
     
     public function get_title($alpha) {
-        return $this->alphabets[strtoupper($alpha)]->get_title();
+        $alpha = strtoupper($alpha);
+        if( !isset($this->alphabets[$alpha]) ) throw new \Worthwelle\Alphonic\Exception\AlphabetNotFoundException();
+        return $this->alphabets[$alpha]->get_title();
     }
     
     public function get_description($alpha) {
-        return $this->alphabets[strtoupper($alpha)]->get_description();
+        $alpha = strtoupper($alpha);
+        if( !isset($this->alphabets[$alpha]) ) throw new \Worthwelle\Alphonic\Exception\AlphabetNotFoundException();
+        return $this->alphabets[$alpha]->get_description();
     }
     
     public function get_source($alpha) {
-        return $this->alphabets[strtoupper($alpha)]->get_source();
+        $alpha = strtoupper($alpha);
+        if( !isset($this->alphabets[$alpha]) ) throw new \Worthwelle\Alphonic\Exception\AlphabetNotFoundException();
+        return $this->alphabets[$alpha]->get_source();
     }
     
     public function get_string($string, $alpha, $ipa = false) {
-        return $this->alphabets[strtoupper($alpha)]->get_string($string, $ipa);
+        $alpha = strtoupper($alpha);
+        if( !isset($this->alphabets[$alpha]) ) throw new \Worthwelle\Alphonic\Exception\AlphabetNotFoundException();
+        return $this->alphabets[$alpha]->get_string($string, $ipa);
+    }
+    
+    public function &alphabet($alpha) {
+        $alpha = strtoupper($alpha);
+        if( !isset($this->alphabets[$alpha]) ) throw new \Worthwelle\Alphonic\Exception\AlphabetNotFoundException();
+        return $this->alphabets[$alpha];
     }
 }
 
