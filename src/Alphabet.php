@@ -6,7 +6,8 @@ class Alphabet {
 
     public $code;
     private $title;
-    public $description;
+    private $description;
+    private $source;
     private $alphabet;
     private $case_sensitive;
 
@@ -16,10 +17,11 @@ class Alphabet {
         $this->code = strtoupper($json['code']);
         $this->title = $json['title']['en'];
         $this->description = $json['description'];
+        $this->source = $json['source'];
         $this->case_sensitive = isset($json['case_sensitive'])?$json['case_sensitive']:false;
     }
     
-    private function add_symbols($alphabet) {
+    public function add_symbols($alphabet) {
         foreach( $alphabet as $key => $value ) {
             $this->add_symbol($key, $value);
         }
@@ -54,6 +56,14 @@ class Alphabet {
             foreach( $this->title as $title ) return $title;
         }
         return $this->title;
+    }
+    
+    public function get_description() {
+        return $this->description;
+    }
+    
+    public function get_source() {
+        return $this->source;
     }
     
     public function get_string($string, $ipa = false) {
