@@ -1,13 +1,11 @@
 <?php
 
 namespace Tests\Unit;
-use Worthwelle\Alphonic\Alphabet;
 
 use Tests\TestCase;
+use Worthwelle\Alphonic\Alphabet;
 
-class AlphabetTest extends TestCase
-{
-    
+class AlphabetTest extends TestCase {
     private $nato_json = <<<NATO
 {
     "code": "NATO",
@@ -114,127 +112,116 @@ NATO;
     }
 }
 INVALID;
-    
+
     /**
      * Load an alphabet.
      *
      * @return void
      */
-    public function testLoadAlphabet()
-    {
+    public function testLoadAlphabet() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $this->assertEquals($alpha->code, "NATO");
+        $this->assertEquals($alpha->code, 'NATO');
     }
-    
+
     /**
      * Load an alphabet.
      *
      * @return void
      */
-    public function testLoadInvalidAlphabet()
-    {
+    public function testLoadInvalidAlphabet() {
         $this->expectException(\Worthwelle\Alphonic\Exception\InvalidAlphabetException::class);
         $alpha = new Alphabet(json_decode($this->invalid_nato_json));
     }
-    
-    public function testGetSymbolRepresentation()
-    {
+
+    public function testGetSymbolRepresentation() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $this->assertEquals($alpha->get_symbol_represenation("A"), "Alfa");
+        $this->assertEquals($alpha->get_symbol_represenation('A'), 'Alfa');
     }
-    
+
     /**
      * Convert a string to phonetics.
      *
      * @return void
      */
-    public function testConvertStringCaseInsensitive()
-    {
+    public function testConvertStringCaseInsensitive() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $this->assertEquals($alpha->get_string("nato"), "November Alfa Tango Oscar");
+        $this->assertEquals($alpha->get_string('nato'), 'November Alfa Tango Oscar');
     }
-    
+
     /**
      * Convert a string to phonetics.
      *
      * @return void
      */
-    public function testConvertStringWithMissingSymbols()
-    {
+    public function testConvertStringWithMissingSymbols() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $this->assertEquals($alpha->get_string("nato:"), "November Alfa Tango Oscar");
+        $this->assertEquals($alpha->get_string('nato:'), 'November Alfa Tango Oscar');
     }
-    
+
     /**
      * Convert a string to phonetics.
      *
      * @return void
      */
-    public function testAddSymbol()
-    {
+    public function testAddSymbol() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $alpha->add_symbol(":","Colon");
-        $this->assertEquals($alpha->get_string("nato:"), "November Alfa Tango Oscar Colon");
+        $alpha->add_symbol(':', 'Colon');
+        $this->assertEquals($alpha->get_string('nato:'), 'November Alfa Tango Oscar Colon');
     }
-    
+
     /**
      * Convert a string to phonetics.
      *
      * @return void
      */
-    public function testAddSymbols()
-    {
+    public function testAddSymbols() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $alpha->add_symbols([":" => "Colon", ";" => "Semicolon"]);
-        $this->assertEquals($alpha->get_string("nato:;"), "November Alfa Tango Oscar Colon Semicolon");
+        $alpha->add_symbols(array(':' => 'Colon', ';' => 'Semicolon'));
+        $this->assertEquals($alpha->get_string('nato:;'), 'November Alfa Tango Oscar Colon Semicolon');
     }
-    
+
     /**
      * Convert a string to phonetics.
      *
      * @return void
      */
-    public function testConvertStringCaseSensitive()
-    {
+    public function testConvertStringCaseSensitive() {
         $alpha = new Alphabet(json_decode($this->nato_json));
         $alpha->set_case_sensitivity(true);
-        $alpha->add_symbol("a","alfa");
-        $alpha->add_symbol("n","november");
-        $alpha->add_symbol("o","oscar");
-        $alpha->add_symbol("t","tango");
-        $this->assertEquals($alpha->get_string("NaTo"), "November alfa Tango oscar");
+        $alpha->add_symbol('a', 'alfa');
+        $alpha->add_symbol('n', 'november');
+        $alpha->add_symbol('o', 'oscar');
+        $alpha->add_symbol('t', 'tango');
+        $this->assertEquals($alpha->get_string('NaTo'), 'November alfa Tango oscar');
     }
-    
+
     /**
      * Convert a string to phonetics.
      *
      * @return void
      */
-    public function testGetTitle()
-    {
+    public function testGetTitle() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $this->assertEquals($alpha->get_title(), "NATO Phonetic Alphabet");
+        $this->assertEquals($alpha->get_title(), 'NATO Phonetic Alphabet');
     }
-    
+
     /**
      * Convert a string to phonetics.
      *
      * @return void
      */
-    public function testGetDescription()
-    {
+    public function testGetDescription() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $this->assertEquals($alpha->get_description(), "The most widely used radiotelephone spelling alphabet. It is officially the International Radiotelephony Spelling Alphabet, and also commonly known as the ICAO phonetic alphabet, with a variation officially known as the ITU phonetic alphabet and figure code.");
+        $this->assertEquals($alpha->get_description(), 'The most widely used radiotelephone spelling alphabet. It is officially the International Radiotelephony Spelling Alphabet, and also commonly known as the ICAO phonetic alphabet, with a variation officially known as the ITU phonetic alphabet and figure code.');
     }
-    
+
     /**
      * Convert a string to phonetics.
      *
      * @return void
      */
-    public function testGetSource()
-    {
+    public function testGetSource() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $this->assertEquals($alpha->get_source(), "https://www.icao.int/Pages/AlphabetRadiotelephony.aspx");
+        $this->assertEquals($alpha->get_source(), 'https://www.icao.int/Pages/AlphabetRadiotelephony.aspx');
     }
 }

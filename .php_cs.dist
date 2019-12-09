@@ -27,6 +27,10 @@ $config
         'phpdoc_order' => true,
         'phpdoc_summary' => false,
         'phpdoc_types_order' => array('null_adjustment' => 'none', 'sort_algorithm' => 'none'),
+        
+        'braces' => [
+            'position_after_functions_and_oop_constructs' => 'same'
+        ],
     ))
     ->setIndent("    ")
     ->setLineEnding("\n")
