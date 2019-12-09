@@ -6,10 +6,13 @@ use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 
 class Alphabet {
     public $code;
+    private $dirty = true;
     private $title;
     private $description;
     private $source;
     private $alphabet;
+    private $unalphabet;
+    private $unalphabet_i;
     private $case_sensitive;
 
     // Constructor
@@ -40,6 +43,7 @@ class Alphabet {
 
     public function set_case_sensitivity($case) {
         $this->case_sensitive = $case;
+        $this->dirty = true;
     }
 
     public function add_symbol($symbol, $representation, $ipa = null) {
@@ -49,6 +53,8 @@ class Alphabet {
         $this->alphabet[$symbol] = array(
             $representation, $ipa
         );
+        $this->unalphabet[$representation] = $symbol;
+        $this->dirty = true;
     }
 
     public function get_symbol_represenation($symbol, $ipa = false) {
@@ -63,6 +69,26 @@ class Alphabet {
         }
 
         return $this->alphabet[$symbol][0];
+    }
+
+    public function get_symbol_from_represenation($rep) {
+        $search_array = $this->unalphabet;
+        if (!$this->case_sensitive) {
+            if ($this->dirty) {
+                $this->unalphabet_i = array();
+                foreach ($this->unalphabet as $key => $val) {
+                    $this->unalphabet_i[strtoupper($key)] = strtoupper($val);
+                }
+                $rep = strtoupper($rep);
+            }
+            $search_array = $this->unalphabet_i;
+        }
+
+        if (!isset($search_array[$rep])) {
+            return null;
+        }
+
+        return $search_array[$rep];
     }
 
     public function get_title() {
@@ -89,7 +115,7 @@ class Alphabet {
             foreach (str_split($string) as $char) {
                 $symbol = $this->get_symbol_represenation($char);
                 if ($symbol != null) {
-                    $phonetic[] = $this->get_symbol_represenation($char);
+                    $phonetic[] = $symbol;
                 }
             }
 
@@ -106,5 +132,16 @@ class Alphabet {
         }
 
         return array(implode(' ', $phonetic), implode(' ', $ipa));
+    }
+
+    public function unphonetify($string) {
+        foreach (explode(' ', $string) as $rep) {
+            $symbol = $this->get_symbol_from_represenation($rep);
+            if ($symbol != null) {
+                $phonetic[] = $symbol;
+            }
+        }
+
+        return implode('', $phonetic);
     }
 }

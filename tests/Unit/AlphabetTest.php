@@ -144,7 +144,7 @@ INVALID;
      *
      * @return void
      */
-    public function testConvertStringCaseInsensitive() {
+    public function testPhonetifyStringCaseInsensitive() {
         $alpha = new Alphabet(json_decode($this->nato_json));
         $this->assertEquals($alpha->phonetify('nato'), 'November Alfa Tango Oscar');
     }
@@ -154,9 +154,29 @@ INVALID;
      *
      * @return void
      */
-    public function testConvertStringWithMissingSymbols() {
+    public function testUnphonetifyStringCaseInsensitive() {
+        $alpha = new Alphabet(json_decode($this->nato_json));
+        $this->assertEquals($alpha->unphonetify('November Alfa Tango Oscar'), 'NATO');
+    }
+
+    /**
+     * Convert a string to phonetics.
+     *
+     * @return void
+     */
+    public function testPhonetifyStringWithMissingSymbols() {
         $alpha = new Alphabet(json_decode($this->nato_json));
         $this->assertEquals($alpha->phonetify('nato:'), 'November Alfa Tango Oscar');
+    }
+
+    /**
+     * Convert a string to phonetics.
+     *
+     * @return void
+     */
+    public function testUnphonetifyStringWithMissingSymbols() {
+        $alpha = new Alphabet(json_decode($this->nato_json));
+        $this->assertEquals($alpha->unphonetify('November Alfa Tango Oscar Colon'), 'NATO');
     }
 
     /**
@@ -186,7 +206,7 @@ INVALID;
      *
      * @return void
      */
-    public function testConvertStringCaseSensitive() {
+    public function testPhonetifyStringCaseSensitive() {
         $alpha = new Alphabet(json_decode($this->nato_json));
         $alpha->set_case_sensitivity(true);
         $alpha->add_symbol('a', 'alfa');
@@ -194,6 +214,21 @@ INVALID;
         $alpha->add_symbol('o', 'oscar');
         $alpha->add_symbol('t', 'tango');
         $this->assertEquals($alpha->phonetify('NaTo'), 'November alfa Tango oscar');
+    }
+
+    /**
+     * Convert a string to phonetics.
+     *
+     * @return void
+     */
+    public function testUnphonetifyStringCaseSensitive() {
+        $alpha = new Alphabet(json_decode($this->nato_json));
+        $alpha->set_case_sensitivity(true);
+        $alpha->add_symbol('a', 'alfa');
+        $alpha->add_symbol('n', 'november');
+        $alpha->add_symbol('o', 'oscar');
+        $alpha->add_symbol('t', 'tango');
+        $this->assertEquals($alpha->unphonetify('November alfa Tango oscar'), 'NaTo');
     }
 
     /**

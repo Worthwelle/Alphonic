@@ -2,11 +2,10 @@
 
 namespace Tests\Unit;
 
-use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
-use Worthwelle\Alphonic\Exception\AlphabetNotFoundException;
-
 use Tests\TestCase;
 use Worthwelle\Alphonic\Alphonic;
+use Worthwelle\Alphonic\Exception\AlphabetNotFoundException;
+use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 
 class AlphonicTest extends TestCase {
     private $nato_json = <<<NATO
@@ -72,7 +71,7 @@ NATO;
     public function testLoadAlphabets() {
         $alphonic = new Alphonic();
         $alphonic->load_alphabets();
-        $this->assertEquals($alphonic->phonetify('nato', 'NATO'), 'November Alfa Tango Oscar');
+        $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
     public function testLoadInvalidAlphabets() {
@@ -96,6 +95,18 @@ NATO;
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_file(__DIR__ . '/../../alphabets/nato.json');
         $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
+    }
+
+    public function testPhonetifyString() {
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_json($this->nato_json);
+        $this->assertEquals($alphonic->phonetify('Testing', 'nato'), 'Tango Echo Sierra Tango India November Golf');
+    }
+
+    public function testUnphonetifyString() {
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_json($this->nato_json);
+        $this->assertEquals($alphonic->unphonetify('Tango Echo Sierra Tango India November Golf', 'nato'), 'TESTING');
     }
 
     public function testGetTitle() {

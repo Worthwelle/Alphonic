@@ -2,8 +2,8 @@
 
 namespace Worthwelle\Alphonic;
 
-use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 use Worthwelle\Alphonic\Exception\AlphabetNotFoundException;
+use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 
 class Alphonic {
     public $alphabets = array();
@@ -70,6 +70,15 @@ class Alphonic {
         }
 
         return $this->alphabets[$alpha]->phonetify($string, $ipa);
+    }
+
+    public function unphonetify($string, $alpha) {
+        $alpha = strtoupper($alpha);
+        if (!isset($this->alphabets[$alpha])) {
+            throw new AlphabetNotFoundException();
+        }
+
+        return $this->alphabets[$alpha]->unphonetify($string);
     }
 
     public function &alphabet($alpha) {
