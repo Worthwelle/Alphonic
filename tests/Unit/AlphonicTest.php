@@ -83,7 +83,7 @@ NATO;
     
     public function testLoadIgnoreInvalidAlphabets() {
         $alphonic = new Alphonic();
-        $alphonic->load_alphabets(array(__DIR__.'/../../resources/test_alphabets'), true);
+        $this->assertNull($alphonic->load_alphabets(array(__DIR__.'/../../resources/test_alphabets'), true));
     }
     
     public function testAddAlphabetFromJSON() {
