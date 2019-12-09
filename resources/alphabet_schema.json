@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "https://www.github.com/worthwelle/alphony/resources/schema.json",
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "title": {
+      "type": [
+        "object",
+        "string"
+      ],
+      "patternProperties": {
+        "^.*$": {
+          "type": [
+            "string",
+            "array"
+          ]
+        }
+      }
+    },
+    "description": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "case_sensitive": {
+      "type": "boolean"
+    },
+    "alphabets": {
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": [
+            "object",
+            "string"
+          ],
+          "patternProperties": {
+            "^.*$": {
+              "type": [
+                "string",
+                "array"
+              ],
+              "maxItems": 2
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "code",
+    "title",
+    "alphabets"
+  ]
+}
