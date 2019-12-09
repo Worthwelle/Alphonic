@@ -13,13 +13,15 @@ class Alphonic {
         
     }
     
-    public function load_alphabets($skip_invalid = false) {
-        $files = glob(__DIR__.'/../alphabets/*.json');
-        foreach( $files as $file ) {
-            try {
-                $this->add_alphabet_from_file($file);
-            } catch( \Worthwelle\Alphonic\Exception\InvalidAlphabetException $e ) {
-                if( $skip_invalid ) continue;
+    public function load_alphabets($directories = array(__DIR__.'/../alphabets'), $skip_invalid = false) {
+        foreach( $directories as $dir ) {
+            $files = glob("$dir/*.json");
+            foreach( $files as $file ) {
+                try {
+                    $this->add_alphabet_from_file($file);
+                } catch( \Worthwelle\Alphonic\Exception\InvalidAlphabetException $e ) {
+                    if( !$skip_invalid ) throw $e;
+                }
             }
         }
     }

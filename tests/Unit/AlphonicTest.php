@@ -75,6 +75,17 @@ NATO;
         $this->assertEquals($alphonic->get_string("nato", "NATO"), "November Alfa Tango Oscar");
     }
     
+    public function testLoadInvalidAlphabets() {
+        $this->expectException(\Worthwelle\Alphonic\Exception\InvalidAlphabetException::class);
+        $alphonic = new Alphonic();
+        $alphonic->load_alphabets(array(__DIR__.'/../../resources/test_alphabets'));
+    }
+    
+    public function testLoadIgnoreInvalidAlphabets() {
+        $alphonic = new Alphonic();
+        $alphonic->load_alphabets(array(__DIR__.'/../../resources/test_alphabets'), true);
+    }
+    
     public function testAddAlphabetFromJSON() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_json($this->nato_json);
