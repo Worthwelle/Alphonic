@@ -10,7 +10,6 @@ class AlphabetTest extends TestCase
     
     private $nato_json = <<<NATO
 {
-    "lang": ["en", "de"],
     "code": "NATO",
     "title": {
         "en": [
@@ -21,7 +20,6 @@ class AlphabetTest extends TestCase
     },
     "description": "The most widely used radiotelephone spelling alphabet. It is officially the International Radiotelephony Spelling Alphabet, and also commonly known as the ICAO phonetic alphabet, with a variation officially known as the ITU phonetic alphabet and figure code.",
     "source": "https://www.icao.int/Pages/AlphabetRadiotelephony.aspx",
-    "group": "NATO",
     "alphabets": {
         "en": {
             "A": "Alfa",
@@ -64,6 +62,58 @@ class AlphabetTest extends TestCase
     }
 }
 NATO;
+    private $invalid_nato_json = <<<INVALID
+{
+    "code": 123,
+    "title": {
+        "en": [
+            "NATO Phonetic Alphabet",
+            "International Radiotelephony Spelling Alphabet",
+            "ICAO phonetic alphabet"
+        ]
+    },
+    "alphabets": {
+        "en": {
+            "A": "Alfa",
+            "B": "Bravo",
+            "C": "Charlie",
+            "D": "Delta",
+            "E": "Echo",
+            "F": "Foxtrot",
+            "G": "Golf",
+            "H": "Hotel",
+            "I": "India",
+            "J": "Juliett",
+            "K": "Kilo",
+            "L": "Lima",
+            "M": "Mike",
+            "N": "November",
+            "O": "Oscar",
+            "P": "Papa",
+            "Q": "Quebec",
+            "R": "Romeo",
+            "S": "Sierra",
+            "T": "Tango",
+            "U": "Uniform",
+            "V": "Victor",
+            "W": "Whiskey",
+            "X": "Xray",
+            "Y": "Yankee",
+            "Z": "Zulu",
+            "1": "One",
+            "2": "Two",
+            "3": "Three",
+            "4": "Four",
+            "5": "Five",
+            "6": "Six",
+            "7": "Seven",
+            "8": "Eight",
+            "9": "Niner",
+            "0": "Zero"
+        }
+    }
+}
+INVALID;
     
     /**
      * Load an alphabet.
@@ -72,13 +122,24 @@ NATO;
      */
     public function testLoadAlphabet()
     {
-        $alpha = new Alphabet(json_decode($this->nato_json, true));
+        $alpha = new Alphabet(json_decode($this->nato_json));
         $this->assertEquals($alpha->code, "NATO");
+    }
+    
+    /**
+     * Load an alphabet.
+     *
+     * @return void
+     */
+    public function testLoadInvalidAlphabet()
+    {
+        $this->expectException(\Worthwelle\Alphonic\Exception\InvalidAlphabetException::class);
+        $alpha = new Alphabet(json_decode($this->invalid_nato_json));
     }
     
     public function testGetSymbolRepresentation()
     {
-        $alpha = new Alphabet(json_decode($this->nato_json, true));
+        $alpha = new Alphabet(json_decode($this->nato_json));
         $this->assertEquals($alpha->get_symbol_represenation("A"), "Alfa");
     }
     
@@ -89,7 +150,7 @@ NATO;
      */
     public function testConvertStringCaseInsensitive()
     {
-        $alpha = new Alphabet(json_decode($this->nato_json, true));
+        $alpha = new Alphabet(json_decode($this->nato_json));
         $this->assertEquals($alpha->get_string("nato"), "November Alfa Tango Oscar");
     }
     
@@ -100,7 +161,7 @@ NATO;
      */
     public function testConvertStringWithMissingSymbols()
     {
-        $alpha = new Alphabet(json_decode($this->nato_json, true));
+        $alpha = new Alphabet(json_decode($this->nato_json));
         $this->assertEquals($alpha->get_string("nato:"), "November Alfa Tango Oscar");
     }
     
@@ -111,7 +172,7 @@ NATO;
      */
     public function testAddSymbol()
     {
-        $alpha = new Alphabet(json_decode($this->nato_json, true));
+        $alpha = new Alphabet(json_decode($this->nato_json));
         $alpha->add_symbol(":","Colon");
         $this->assertEquals($alpha->get_string("nato:"), "November Alfa Tango Oscar Colon");
     }
@@ -123,7 +184,7 @@ NATO;
      */
     public function testAddSymbols()
     {
-        $alpha = new Alphabet(json_decode($this->nato_json, true));
+        $alpha = new Alphabet(json_decode($this->nato_json));
         $alpha->add_symbols([":" => "Colon", ";" => "Semicolon"]);
         $this->assertEquals($alpha->get_string("nato:;"), "November Alfa Tango Oscar Colon Semicolon");
     }
@@ -135,7 +196,7 @@ NATO;
      */
     public function testConvertStringCaseSensitive()
     {
-        $alpha = new Alphabet(json_decode($this->nato_json, true));
+        $alpha = new Alphabet(json_decode($this->nato_json));
         $alpha->set_case_sensitivity(true);
         $alpha->add_symbol("a","alfa");
         $alpha->add_symbol("n","november");
@@ -151,7 +212,7 @@ NATO;
      */
     public function testGetTitle()
     {
-        $alpha = new Alphabet(json_decode($this->nato_json, true));
+        $alpha = new Alphabet(json_decode($this->nato_json));
         $this->assertEquals($alpha->get_title(), "NATO Phonetic Alphabet");
     }
     
@@ -162,7 +223,7 @@ NATO;
      */
     public function testGetDescription()
     {
-        $alpha = new Alphabet(json_decode($this->nato_json, true));
+        $alpha = new Alphabet(json_decode($this->nato_json));
         $this->assertEquals($alpha->get_description(), "The most widely used radiotelephone spelling alphabet. It is officially the International Radiotelephony Spelling Alphabet, and also commonly known as the ICAO phonetic alphabet, with a variation officially known as the ITU phonetic alphabet and figure code.");
     }
     
@@ -173,7 +234,7 @@ NATO;
      */
     public function testGetSource()
     {
-        $alpha = new Alphabet(json_decode($this->nato_json, true));
+        $alpha = new Alphabet(json_decode($this->nato_json));
         $this->assertEquals($alpha->get_source(), "https://www.icao.int/Pages/AlphabetRadiotelephony.aspx");
     }
 }

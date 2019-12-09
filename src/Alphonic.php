@@ -13,15 +13,19 @@ class Alphonic {
         
     }
     
-    public function load_alphabets() {
+    public function load_alphabets($skip_invalid = false) {
         $files = glob(__DIR__.'/../alphabets/*.json');
         foreach( $files as $file ) {
-            $this->add_alphabet_from_file($file);
+            try {
+                $this->add_alphabet_from_file($file);
+            } catch( \Worthwelle\Alphonic\Exception\InvalidAlphabetException $e ) {
+                if( $skip_invalid ) continue;
+            }
         }
     }
     
-    public function add_alphabet_from_json($json) {
-        $alpha = new Alphabet(json_decode($json, true));
+    public function add_alphabet_from_json($json, $suppress_exceptions = false) {
+        $alpha = new Alphabet(json_decode($json));
         $this->alphabets[strtoupper($alpha->code)] = $alpha;
     }
     

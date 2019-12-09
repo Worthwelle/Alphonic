@@ -13,12 +13,20 @@ class Alphabet {
 
     // Constructor 
     public function __construct($json) {
-        $this->add_symbols($json['alphabets']['en']);
-        $this->code = strtoupper($json['code']);
-        $this->title = $json['title']['en'];
-        $this->description = $json['description'];
-        $this->source = $json['source'];
-        $this->case_sensitive = isset($json['case_sensitive'])?$json['case_sensitive']:false;
+        $validator = new \JsonSchema\Validator;
+        $validator->validate($json,  (object) array('$ref' => 'file://' . __DIR__ . '/../resources/alphabet_schema.json'));
+        if( !$validator->isValid() ) {
+            throw new \Worthwelle\Alphonic\Exception\InvalidAlphabetException();
+        }
+        
+        $this->add_symbols($json->alphabets->en);
+        $this->code = strtoupper($json->code);
+        $this->title = $json->title->en;
+        if( isset( $json->description ) )
+            $this->description = $json->description;
+        if( isset( $json->source ) )
+            $this->source = $json->source;
+        $this->case_sensitive = isset($json->case_sensitive)?$json->case_sensitive:false;
     }
     
     public function add_symbols($alphabet) {

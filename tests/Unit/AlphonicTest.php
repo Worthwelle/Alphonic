@@ -10,7 +10,6 @@ class AlphonicTest extends TestCase
 
     private $nato_json = <<<NATO
 {
-    "lang": ["en", "de"],
     "code": "NATO",
     "title": {
         "en": [
@@ -21,7 +20,6 @@ class AlphonicTest extends TestCase
     },
     "description": "The most widely used radiotelephone spelling alphabet. It is officially the International Radiotelephony Spelling Alphabet, and also commonly known as the ICAO phonetic alphabet, with a variation officially known as the ITU phonetic alphabet and figure code.",
     "source": "https://www.icao.int/Pages/AlphabetRadiotelephony.aspx",
-    "group": "NATO",
     "alphabets": {
         "en": {
             "A": "Alfa",
