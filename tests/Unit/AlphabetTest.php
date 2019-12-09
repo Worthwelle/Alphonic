@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Worthwelle\Alphonic\Alphabet;
+use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 
 class AlphabetTest extends TestCase {
     private $nato_json = <<<NATO
@@ -129,7 +130,7 @@ INVALID;
      * @return void
      */
     public function testLoadInvalidAlphabet() {
-        $this->expectException(\Worthwelle\Alphonic\Exception\InvalidAlphabetException::class);
+        $this->expectException(InvalidAlphabetException::class);
         $alpha = new Alphabet(json_decode($this->invalid_nato_json));
     }
 
@@ -145,7 +146,7 @@ INVALID;
      */
     public function testConvertStringCaseInsensitive() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $this->assertEquals($alpha->get_string('nato'), 'November Alfa Tango Oscar');
+        $this->assertEquals($alpha->phonetify('nato'), 'November Alfa Tango Oscar');
     }
 
     /**
@@ -155,7 +156,7 @@ INVALID;
      */
     public function testConvertStringWithMissingSymbols() {
         $alpha = new Alphabet(json_decode($this->nato_json));
-        $this->assertEquals($alpha->get_string('nato:'), 'November Alfa Tango Oscar');
+        $this->assertEquals($alpha->phonetify('nato:'), 'November Alfa Tango Oscar');
     }
 
     /**
@@ -166,7 +167,7 @@ INVALID;
     public function testAddSymbol() {
         $alpha = new Alphabet(json_decode($this->nato_json));
         $alpha->add_symbol(':', 'Colon');
-        $this->assertEquals($alpha->get_string('nato:'), 'November Alfa Tango Oscar Colon');
+        $this->assertEquals($alpha->phonetify('nato:'), 'November Alfa Tango Oscar Colon');
     }
 
     /**
@@ -177,7 +178,7 @@ INVALID;
     public function testAddSymbols() {
         $alpha = new Alphabet(json_decode($this->nato_json));
         $alpha->add_symbols(array(':' => 'Colon', ';' => 'Semicolon'));
-        $this->assertEquals($alpha->get_string('nato:;'), 'November Alfa Tango Oscar Colon Semicolon');
+        $this->assertEquals($alpha->phonetify('nato:;'), 'November Alfa Tango Oscar Colon Semicolon');
     }
 
     /**
@@ -192,7 +193,7 @@ INVALID;
         $alpha->add_symbol('n', 'november');
         $alpha->add_symbol('o', 'oscar');
         $alpha->add_symbol('t', 'tango');
-        $this->assertEquals($alpha->get_string('NaTo'), 'November alfa Tango oscar');
+        $this->assertEquals($alpha->phonetify('NaTo'), 'November alfa Tango oscar');
     }
 
     /**

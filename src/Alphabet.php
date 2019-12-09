@@ -2,6 +2,8 @@
 
 namespace Worthwelle\Alphonic;
 
+use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
+
 class Alphabet {
     public $code;
     private $title;
@@ -15,7 +17,7 @@ class Alphabet {
         $validator = new \JsonSchema\Validator();
         $validator->validate($json, (object) array('$ref' => 'file://' . __DIR__ . '/../resources/alphabet_schema.json'));
         if (!$validator->isValid()) {
-            throw new \Worthwelle\Alphonic\Exception\InvalidAlphabetException();
+            throw new InvalidAlphabetException();
         }
 
         $this->add_symbols($json->alphabets->en);
@@ -81,7 +83,7 @@ class Alphabet {
         return $this->source;
     }
 
-    public function get_string($string, $ipa = false) {
+    public function phonetify($string, $ipa = false) {
         $phonetic = array();
         if (!$ipa) {
             foreach (str_split($string) as $char) {

@@ -2,6 +2,9 @@
 
 namespace Tests\Unit;
 
+use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
+use Worthwelle\Alphonic\Exception\AlphabetNotFoundException;
+
 use Tests\TestCase;
 use Worthwelle\Alphonic\Alphonic;
 
@@ -69,11 +72,11 @@ NATO;
     public function testLoadAlphabets() {
         $alphonic = new Alphonic();
         $alphonic->load_alphabets();
-        $this->assertEquals($alphonic->get_string('nato', 'NATO'), 'November Alfa Tango Oscar');
+        $this->assertEquals($alphonic->phonetify('nato', 'NATO'), 'November Alfa Tango Oscar');
     }
 
     public function testLoadInvalidAlphabets() {
-        $this->expectException(\Worthwelle\Alphonic\Exception\InvalidAlphabetException::class);
+        $this->expectException(InvalidAlphabetException::class);
         $alphonic = new Alphonic();
         $alphonic->load_alphabets(array(__DIR__ . '/../../resources/test_alphabets'));
     }
@@ -103,7 +106,7 @@ NATO;
 
     public function testGetTitleFromInvalidAlphabet() {
         $alphonic = new Alphonic();
-        $this->expectException(\Worthwelle\Alphonic\Exception\AlphabetNotFoundException::class);
+        $this->expectException(AlphabetNotFoundException::class);
         $alphonic->get_title('nato');
     }
 
@@ -115,7 +118,7 @@ NATO;
 
     public function testGetDescriptionFromInvalidAlphabet() {
         $alphonic = new Alphonic();
-        $this->expectException(\Worthwelle\Alphonic\Exception\AlphabetNotFoundException::class);
+        $this->expectException(AlphabetNotFoundException::class);
         $alphonic->get_description('nato');
     }
 
@@ -127,7 +130,7 @@ NATO;
 
     public function testGetSourceFromInvalidAlphabet() {
         $alphonic = new Alphonic();
-        $this->expectException(\Worthwelle\Alphonic\Exception\AlphabetNotFoundException::class);
+        $this->expectException(AlphabetNotFoundException::class);
         $alphonic->get_source('nato');
     }
 }

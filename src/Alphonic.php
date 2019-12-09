@@ -2,6 +2,9 @@
 
 namespace Worthwelle\Alphonic;
 
+use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
+use Worthwelle\Alphonic\Exception\AlphabetNotFoundException;
+
 class Alphonic {
     public $alphabets = array();
 
@@ -15,7 +18,7 @@ class Alphonic {
             foreach ($files as $file) {
                 try {
                     $this->add_alphabet_from_file($file);
-                } catch (\Worthwelle\Alphonic\Exception\InvalidAlphabetException $e) {
+                } catch (InvalidAlphabetException $e) {
                     if (!$skip_invalid) {
                         throw $e;
                     }
@@ -36,7 +39,7 @@ class Alphonic {
     public function get_title($alpha) {
         $alpha = strtoupper($alpha);
         if (!isset($this->alphabets[$alpha])) {
-            throw new \Worthwelle\Alphonic\Exception\AlphabetNotFoundException();
+            throw new AlphabetNotFoundException();
         }
 
         return $this->alphabets[$alpha]->get_title();
@@ -45,7 +48,7 @@ class Alphonic {
     public function get_description($alpha) {
         $alpha = strtoupper($alpha);
         if (!isset($this->alphabets[$alpha])) {
-            throw new \Worthwelle\Alphonic\Exception\AlphabetNotFoundException();
+            throw new AlphabetNotFoundException();
         }
 
         return $this->alphabets[$alpha]->get_description();
@@ -54,25 +57,25 @@ class Alphonic {
     public function get_source($alpha) {
         $alpha = strtoupper($alpha);
         if (!isset($this->alphabets[$alpha])) {
-            throw new \Worthwelle\Alphonic\Exception\AlphabetNotFoundException();
+            throw new AlphabetNotFoundException();
         }
 
         return $this->alphabets[$alpha]->get_source();
     }
 
-    public function get_string($string, $alpha, $ipa = false) {
+    public function phonetify($string, $alpha, $ipa = false) {
         $alpha = strtoupper($alpha);
         if (!isset($this->alphabets[$alpha])) {
-            throw new \Worthwelle\Alphonic\Exception\AlphabetNotFoundException();
+            throw new AlphabetNotFoundException();
         }
 
-        return $this->alphabets[$alpha]->get_string($string, $ipa);
+        return $this->alphabets[$alpha]->phonetify($string, $ipa);
     }
 
     public function &alphabet($alpha) {
         $alpha = strtoupper($alpha);
         if (!isset($this->alphabets[$alpha])) {
-            throw new \Worthwelle\Alphonic\Exception\AlphabetNotFoundException();
+            throw new AlphabetNotFoundException();
         }
 
         return $this->alphabets[$alpha];
