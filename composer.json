@@ -16,7 +16,11 @@
             "homepage": "https://kiranwelle.com/"
         }
     ],
+    "require": {
+        "justinrainbow/json-schema": "^5.2"
+    },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "~2.2.20||~2.15.1",
         "phpunit/phpunit": "~5.7"
     },
     "autoload": {
@@ -31,8 +35,5 @@
         "psr-4": {
             "Tests\\": "tests/"
         }
-    },
-    "require": {
-        "justinrainbow/json-schema": "^5.2"
     }
 }
