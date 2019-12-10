@@ -45,7 +45,7 @@ $alphonic->alphabet("NATO")->add_symbol("!","Exclamation");
 
 echo $output = $alphonic->phonetify("Holy alphabets, Batman!", "NATO");
 // Hotel Oscar Lima Yankee | Alfa Lima Papa Hotel Alfa Bravo Echo Tango Sierra Comma | Bravo Alfa Tango Mike Alfa November Exclamation
-echo $alphonic->unphonetify($output, $alpha);
+echo $alphonic->unphonetify($output, "NATO");
 // HOLY ALPHABETS, BATMAN!
 ```
 
