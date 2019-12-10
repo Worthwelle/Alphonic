@@ -7,19 +7,17 @@ use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 class Alphabet {
     public $code;
     private $dirty = true;
-    private $title;
-    private $description;
-    private $source;
-    private $alphabet;
-    private $unalphabet;
-    private $unalphabet_i;
-    private $case_sensitive;
+    protected $title;
+    protected $description;
+    protected $source;
+    protected $alphabet;
+    protected $unalphabet;
+    protected $unalphabet_i;
+    protected $case_sensitive;
 
     // Constructor
     public function __construct($json) {
-        $validator = new \JsonSchema\Validator();
-        $validator->validate($json, (object) array('$ref' => 'file://' . __DIR__ . '/../resources/alphabet_schema.json'));
-        if (!$validator->isValid()) {
+        if (!$this->validate_json($json)) {
             throw new InvalidAlphabetException();
         }
 
@@ -33,6 +31,13 @@ class Alphabet {
             $this->source = $json->source;
         }
         $this->case_sensitive = isset($json->case_sensitive) ? $json->case_sensitive : false;
+    }
+
+    public function validate_json($json) {
+        $validator = new \JsonSchema\Validator();
+        $validator->validate($json, (object) array('$ref' => 'file://' . __DIR__ . '/../resources/alphabet_schema.json'));
+
+        return $validator->isValid();
     }
 
     public function add_symbols($alphabet) {
