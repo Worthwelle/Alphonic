@@ -40,6 +40,7 @@
         "coverage": "phpunit --verbose --fail-on-warning --coverage-text",
         "style-check": "php-cs-fixer fix --dry-run --verbose --diff",
         "style-fix": "php-cs-fixer fix --verbose",
-        "test": "phpunit --verbose --fail-on-warning"
+        "test": "phpunit --verbose --fail-on-warning",
+        "testOnly": "phpunit --colors --filter"
     }
 }

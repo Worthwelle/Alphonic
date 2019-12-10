@@ -39,10 +39,8 @@
           "patternProperties": {
             "^.*$": {
               "type": [
-                "string",
-                "array"
-              ],
-              "maxItems": 2
+                "string"
+              ]
             }
           }
         }

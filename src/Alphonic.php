@@ -27,7 +27,7 @@ class Alphonic {
         }
     }
 
-    public function add_alphabet_from_json($json, $suppress_exceptions = false) {
+    public function add_alphabet_from_json($json) {
         $alpha = new Alphabet(json_decode($json));
         $this->alphabets[strtoupper($alpha->code)] = $alpha;
     }
