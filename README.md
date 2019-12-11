@@ -83,10 +83,10 @@ composer style-fix                       # automatically fix code style errors
 
 Currently supported alphabets:
 
- * \[`NATO`\] NATO phonetic alphabet (2008 respelling)
-    * AKA: International Radiotelephony Spelling Alphabet
-    * AKA: ICAO phonetic alphabet
- * \[`UECU1920`\] Universal Electrical Communications Union (1920)
- * \[`CCIR1927`\] International Radiotelegraph Convention (1927)
- * \[`CCIR-ICAN1932`\] General Radiocommunication and Additional Regulations (1932)
- * \[`IRCC1938`\] International Radiocommunication Conference (Cairo, 1938)
+| Code | Alphabet Title |
+|------|----------------|
+| `NATO` | NATO phonetic alphabet (2008 respelling)<br>International Radiotelephony Spelling Alphabet<br>ICAO phonetic alphabet |
+| `UECU1920` | Universal Electrical Communications Union (1920) |
+| `CCIR1927` | International Radiotelegraph Convention (1927) |
+| `CCIR-ICAN1932` | General Radiocommunication and Additional Regulations (1932) |
+| `IRCC1938` | International Radiocommunication Conference (Cairo, 1938) |
