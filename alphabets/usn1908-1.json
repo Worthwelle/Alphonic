@@ -1,0 +1,38 @@
+{
+    "code": "USN1908-1",
+    "title": {
+        "en": "U.S. Navy (Version 1)"
+    },
+    "description": "Used for calling out flags to be hoisted in a signal on the deck of a ship.",
+    "source": "https://books.google.com/books?id=dDczAQAAMAAJ&pg=PA82&lpg=PA82&dq=United+States+Navy+General+Signal+Book&source=bl&ots=pUpnCCjDDQ&sig=awa08PCeV1toGpNnqo6CC8tNRLo&hl=en&sa=X&ved=0ahUKEwjn-JP1hJ_ZAhUP42MKHfNVBsAQ6AEILTAB#v=onepage&q=United%20States%20Navy%20General%20Signal%20Book&f=false",
+    "alphabets": {
+        "en": {
+            "A": "Actor",
+            "B": "Baker",
+            "C": "Canteen",
+            "D": "Diver",
+            "E": "Eagle",
+            "F": "Fisher",
+            "G": "Gangway",
+            "H": "Halliard",
+            "I": "Insect",
+            "J": "Jockey",
+            "K": "Knapsack",
+            "L": "Lugger",
+            "M": "Musket",
+            "N": "Neptune",
+            "O": "Oyster",
+            "P": "Pistol",
+            "Q": "Quadrant",
+            "R": "Reefer",
+            "S": "Shipmate",
+            "T": "Topsail",
+            "U": "Unload",
+            "V": "Vessel",
+            "W": "Windage",
+            "X": "Xray",
+            "Y": "Yeoman",
+            "Z": "Zebra"
+        }
+    }
+}

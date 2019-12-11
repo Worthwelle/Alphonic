@@ -1,0 +1,38 @@
+{
+    "code": "USN1938",
+    "title": {
+        "en": "U.S. Navy (1938)"
+    },
+    "description": "",
+    "source": "http://www.virhistory.com/navy/manuals/1929_comm_inst-ii.pdf",
+    "alphabets": {
+        "en": {
+            "A": "Afirm",
+            "B": "Baker",
+            "C": "Cast",
+            "D": "Dog",
+            "E": "Easy",
+            "F": "Fox",
+            "G": "George",
+            "H": "Hypo",
+            "I": "Int",
+            "J": "Jig",
+            "K": "King",
+            "L": "Love",
+            "M": "Mike",
+            "N": "Negat",
+            "O": "Option",
+            "P": "Prep",
+            "Q": "Queen",
+            "R": "Roger",
+            "S": "Sail",
+            "T": "Tare",
+            "U": "Unit",
+            "V": "Victor",
+            "W": "William",
+            "X": "X-ray",
+            "Y": "Yoke",
+            "Z": "Zed"
+        }
+    }
+}

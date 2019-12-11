@@ -1,0 +1,38 @@
+{
+    "code": "APCO1974",
+    "title": {
+        "en": "Association of Public-Safety Communications Officials-International Project 14(1974)"
+    },
+    "description": "",
+    "source": "https://archive.org/details/nationaltraining025505mbp",
+    "alphabets": {
+        "en": {
+            "A": "Alpha",
+            "B": "Bravo",
+            "C": "Charlie",
+            "D": "Delta",
+            "E": "Echo",
+            "F": "Foxtrot",
+            "G": "Golf",
+            "H": "Hotel",
+            "I": "India",
+            "J": "Juliette",
+            "K": "Kilo",
+            "L": "Lima",
+            "M": "Mike",
+            "N": "November",
+            "O": "Oscar",
+            "P": "Papa",
+            "Q": "Quebec",
+            "R": "Romeo",
+            "S": "Sierra",
+            "T": "Tango",
+            "U": "Uniform",
+            "V": "Victor",
+            "W": "Whiskey",
+            "X": "Xray",
+            "Y": "Yankee",
+            "Z": "Zulu"
+        }
+    }
+}

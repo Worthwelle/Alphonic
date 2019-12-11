@@ -1,0 +1,48 @@
+{
+    "code": "USAFM245-1939",
+    "title": {
+        "en": "U.S. Army Field Manual 24-5 (1939-1943)"
+    },
+    "description": "",
+    "source": "https://archive.org/details/Fm24-5",
+    "alphabets": {
+        "en": {
+            "A": "Afirm",
+            "B": "Baker",
+            "C": "Cast",
+            "D": "Dog",
+            "E": "Easy",
+            "F": "Fox",
+            "G": "George",
+            "H": "Hypo",
+            "I": "Inter",
+            "J": "Jig",
+            "K": "King",
+            "L": "Love",
+            "M": "Mike",
+            "N": "Negat",
+            "O": "Option",
+            "P": "Prep",
+            "Q": "Queen",
+            "R": "Roger",
+            "S": "Sail",
+            "T": "Tare",
+            "U": "Unit",
+            "V": "Victor",
+            "W": "William",
+            "X": "X-ray",
+            "Y": "Yoke",
+            "Z": "Zed",
+            "1": "One",
+            "2": "Two",
+            "3": "Three",
+            "4": "Four",
+            "5": "Five",
+            "6": "Six",
+            "7": "Seven",
+            "8": "Eight",
+            "9": "Nine",
+            "0": "Zero"
+        }
+    }
+}

@@ -6,7 +6,6 @@
     },
     "description": "The phonetic alphabet laid forth in Appendix 1 (International Radiotelephone Procedure) of the General Radiotelegraph Regulations put forward by the International Radiotelegraph Convention in 1927.",
     "source": "http://handle.itu.int/11.1004/020.1000/1.4",
-    "group": "International",
     "alphabets": {
         "en": {
             "A": "Amsterdam",

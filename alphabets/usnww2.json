@@ -1,0 +1,38 @@
+{
+    "code": "USNWW2",
+    "title": {
+        "en": "U.S. Navy World War II"
+    },
+    "description": "",
+    "source": "https://en.wikipedia.org/wiki/Allied_military_phonetic_spelling_alphabets#cite_note-19",
+    "alphabets": {
+        "en": {
+            "A": "Afirm",
+            "B": "Baker",
+            "C": "Charlie",
+            "D": "Dog",
+            "E": "Easy",
+            "F": "Fox",
+            "G": "George",
+            "H": "How",
+            "I": "Int",
+            "J": "Jig",
+            "K": "King",
+            "L": "Love",
+            "M": "Mike",
+            "N": "Negat",
+            "O": "Option",
+            "P": "Prep",
+            "Q": "Queen",
+            "R": "Roger",
+            "S": "Sugar",
+            "T": "Tare",
+            "U": "Uncle",
+            "V": "Victor",
+            "W": "William",
+            "X": "Xray",
+            "Y": "Yoke",
+            "Z": "Zebra"
+        }
+    }
+}

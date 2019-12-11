@@ -1,0 +1,38 @@
+{
+    "code": "ARRL1936",
+    "title": {
+        "en": "American Radio Relay League (1936)"
+    },
+    "description": "",
+    "source": "http://www.tubebooks.org/Books/arrl_1936.pdf",
+    "alphabets": {
+        "en": {
+            "A": "Able",
+            "B": "Boy",
+            "C": "Cast",
+            "D": "Dog",
+            "E": "Easy",
+            "F": "Fox",
+            "G": "George",
+            "H": "Have",
+            "I": "Item",
+            "J": "Jig",
+            "K": "King",
+            "L": "Love",
+            "M": "Mike",
+            "N": "Nan",
+            "O": "Oboe",
+            "P": "Pup",
+            "Q": "Quack",
+            "R": "Rot",
+            "S": "Sail",
+            "T": "Tare",
+            "U": "Unit",
+            "V": "Vice",
+            "W": "Watch",
+            "X": "X-ray",
+            "Y": "Yoke",
+            "Z": "Zed"
+        }
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "code": "NATO1956",
+    "title": {
+        "en": "NATO Phonetic Alphabet (Jan 1 - Feb 29, 1956)"
+    },
+    "description": "The NATO phonetic spelling alphabet was first adopted on January 1, 1956, while the ICAO radiotelephony spelling alphabet was still undergoing final changes.",
+    "source": "http://archives.nato.int/uploads/r/null/1/2/126367/SGM-0217-55_ENG_PDP.pdf",
+    "alphabets": {
+        "en": {
+            "A": "Alfa",
+            "B": "Bravo",
+            "C": "Charlie",
+            "D": "Delta",
+            "E": "Echo",
+            "F": "Foxtrot",
+            "G": "Golf",
+            "H": "Hotel",
+            "I": "India",
+            "J": "Juliett",
+            "K": "Kilo",
+            "L": "Lima",
+            "M": "Mike",
+            "N": "Nectar",
+            "O": "Oscar",
+            "P": "Papa",
+            "Q": "Quebec",
+            "R": "Romeo",
+            "S": "Sierra",
+            "T": "Tango",
+            "U": "Uniform",
+            "V": "Victor",
+            "W": "Whiskey",
+            "X": "X-ray",
+            "Y": "Yankee",
+            "Z": "Zulu",
+        }
+    }
+}

@@ -1,0 +1,41 @@
+{
+    "code": "WU1928",
+    "title": {
+        "en": [
+            "American Association of Railroads (1932)",
+            "Western Union (~1928)"
+        ]
+    },
+    "description": "",
+    "source": "https://www.governmentattic.org/4docs/ICAO-WordSpellingAlphabet_1959.pdf",
+    "alphabets": {
+        "en": {
+            "A": "Adams",
+            "B": "Boston",
+            "C": "Chicago",
+            "D": "Denver",
+            "E": "Edward",
+            "F": "Frank",
+            "G": "George",
+            "H": "Henry",
+            "I": "Ida",
+            "J": "John",
+            "K": "King",
+            "L": "Lincoln",
+            "M": "Mary",
+            "N": "New York",
+            "O": "Ocean",
+            "P": "Peter",
+            "Q": "Queen",
+            "R": "Robert",
+            "S": "Sugar",
+            "T": "Thomas",
+            "U": "Union",
+            "V": "Victor",
+            "W": "William",
+            "X": "X-ray",
+            "Y": "Young",
+            "Z": "Zero"
+        }
+    }
+}

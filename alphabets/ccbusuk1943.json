@@ -1,0 +1,48 @@
+{
+    "code": "CCBUSUK1943",
+    "title": {
+        "en": "Combined Communications Board (1943)"
+    },
+    "description": "",
+    "source": "http://www.n7cfo.com/tgph/Dwnlds/sigcorps/FM24-12.pdf",
+    "alphabets": {
+        "en": {
+            "A": "Able",
+            "B": "Baker",
+            "C": "Charlie",
+            "D": "Dog",
+            "E": "Easy",
+            "F": "Fox",
+            "G": "George",
+            "H": "How",
+            "I": "Item",
+            "J": "Jig",
+            "K": "King",
+            "L": "Love",
+            "M": "Mike",
+            "N": "Nan",
+            "O": "Oboe",
+            "P": "Peter",
+            "Q": "Queen",
+            "R": "Roger",
+            "S": "Sugar",
+            "T": "Tare",
+            "U": "Uncle",
+            "V": "Victor",
+            "W": "William",
+            "X": "X-ray",
+            "Y": "Yoke",
+            "Z": "Zebra",
+            "1": "One",
+            "2": "Two",
+            "3": "Three",
+            "4": "Four",
+            "5": "Five",
+            "6": "Six",
+            "7": "Seven",
+            "8": "Eight",
+            "9": "Niner",
+            "0": "Zero"
+        }
+    }
+}

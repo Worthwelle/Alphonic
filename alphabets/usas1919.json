@@ -1,0 +1,38 @@
+{
+    "code": "USAS1919",
+    "title": {
+        "en": "U.S. Air Service (1919)"
+    },
+    "description": "",
+    "source": "https://www.governmentattic.org/4docs/ICAO-WordSpellingAlphabet_1959.pdf",
+    "alphabets": {
+        "en": {
+            "A": "Able",
+            "B": "Boy",
+            "C": "Cast",
+            "D": "Dock",
+            "E": "Easy",
+            "F": "Fox",
+            "G": "George",
+            "H": "Have",
+            "I": "Item",
+            "J": "Jig",
+            "K": "King",
+            "L": "Love",
+            "M": "Mike",
+            "N": "Nan",
+            "O": "Oble",
+            "P": "Pup",
+            "Q": "Quack",
+            "R": "Rush",
+            "S": "Sail",
+            "T": "Tare",
+            "U": "Unit",
+            "V": "Vice",
+            "W": "Watch",
+            "X": "X-ray",
+            "Y": "Yoke",
+            "Z": "Zed"
+        }
+    }
+}

@@ -1,0 +1,42 @@
+{
+    "code": "APCO1941",
+    "title": {
+        "en": [
+            "Association of Public-Safety Communications Officials-International (1941)",
+            "Los Angeles Police Department",
+            "California Highway Patrol"
+        ]
+    },
+    "description": "",
+    "source": "https://archive.org/details/nationaltraining025505mbp",
+    "alphabets": {
+        "en": {
+            "A": "Adam",
+            "B": "Boy",
+            "C": "Charles",
+            "D": "David",
+            "E": "Edward",
+            "F": "Frank",
+            "G": "George",
+            "H": "Henry",
+            "I": "Ida",
+            "J": "John",
+            "K": "King",
+            "L": "Lincoln",
+            "M": "Mary",
+            "N": "Nora",
+            "O": "Ocean",
+            "P": "Paul",
+            "Q": "Queen",
+            "R": "Robert",
+            "S": "Sam",
+            "T": "Tom",
+            "U": "Union",
+            "V": "Victor",
+            "W": "William",
+            "X": "X-ray",
+            "Y": "Young",
+            "Z": "Zebra"
+        }
+    }
+}

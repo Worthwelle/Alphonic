@@ -1,0 +1,38 @@
+{
+    "code": "USN1908-2",
+    "title": {
+        "en": "U.S. Navy (Version 2)"
+    },
+    "description": "Used for calling out flags to be hoisted in a signal on the deck of a ship.",
+    "source": "https://books.google.com/books?id=dDczAQAAMAAJ&pg=PA82&lpg=PA82&dq=United+States+Navy+General+Signal+Book&source=bl&ots=pUpnCCjDDQ&sig=awa08PCeV1toGpNnqo6CC8tNRLo&hl=en&sa=X&ved=0ahUKEwjn-JP1hJ_ZAhUP42MKHfNVBsAQ6AEILTAB#v=onepage&q=United%20States%20Navy%20General%20Signal%20Book&f=false",
+    "alphabets": {
+        "en": {
+            "A": "Ash",
+            "B": "Back",
+            "C": "Chain",
+            "D": "Dog",
+            "E": "Egg",
+            "F": "Fox",
+            "G": "Gig",
+            "H": "Horse",
+            "I": "Ice",
+            "J": "Jake",
+            "K": "King",
+            "L": "Lash",
+            "M": "Mule",
+            "N": "Net",
+            "O": "Oak",
+            "P": "Page",
+            "Q": "Quail",
+            "R": "Raft",
+            "S": "Scout",
+            "T": "Tide",
+            "U": "Use",
+            "V": "Vast",
+            "W": "Winch",
+            "X": "Xray",
+            "Y": "Yacht",
+            "Z": "Zoo"
+        }
+    }
+}

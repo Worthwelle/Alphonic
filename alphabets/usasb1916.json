@@ -1,0 +1,38 @@
+{
+    "code": "USASB1916",
+    "title": {
+        "en": "U.S. Army Signal Book (1916-1939)"
+    },
+    "description": "",
+    "source": "https://archive.org/details/SignalBook1916",
+    "alphabets": {
+        "en": {
+            "A": "Able",
+            "B": "Boy",
+            "C": "Cast",
+            "D": "Dock",
+            "E": "Easy",
+            "F": "Fox",
+            "G": "George",
+            "H": "Have",
+            "I": "Item",
+            "J": "Jig",
+            "K": "King",
+            "L": "Love",
+            "M": "Mike",
+            "N": "Nan",
+            "O": "Opal",
+            "P": "Pup",
+            "Q": "Quack",
+            "R": "Rush",
+            "S": "Sail",
+            "T": "Tare",
+            "U": "Unit",
+            "V": "Vice",
+            "W": "Watch",
+            "X": "X-ray",
+            "Y": "Yoke",
+            "Z": "Zed"
+        }
+    }
+}

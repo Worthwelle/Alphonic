@@ -1,0 +1,38 @@
+{
+    "code": "USN1913",
+    "title": {
+        "en": "U.S. Navy (1913-1926)"
+    },
+    "description": "",
+    "source": "https://en.wikipedia.org/wiki/Allied_military_phonetic_spelling_alphabets",
+    "alphabets": {
+        "en": {
+            "A": "Able",
+            "B": "Boy",
+            "C": "Cast",
+            "D": "Dog",
+            "E": "Easy",
+            "F": "Fox",
+            "G": "George",
+            "H": "Have",
+            "I": "Item",
+            "J": "Jig",
+            "K": "King",
+            "L": "Love",
+            "M": "Mike",
+            "N": "Nan",
+            "O": "Oboe",
+            "P": "Pup",
+            "Q": "Quack",
+            "R": "Rush",
+            "S": "Sail",
+            "T": "Tare",
+            "U": "Unit",
+            "V": "Vice",
+            "W": "Watch",
+            "X": "X-ray",
+            "Y": "Yoke",
+            "Z": "Zed"
+        }
+    }
+}
