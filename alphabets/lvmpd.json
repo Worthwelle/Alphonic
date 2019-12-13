@@ -1,9 +1,7 @@
 {
     "code": "LVMPD",
     "title": {
-        "en": [
-            "Las Vegas Metropolitan Police Department"
-        ]
+        "en": "Las Vegas Metropolitan Police Department"
     },
     "description": "",
     "source": "https://www.lvmpd.com/en-us/ProtectTheCity/Documents/IDF%20Code%20Card.pdf",
@@ -34,7 +32,7 @@
             "W": "William",
             "X": "X-ray",
             "Y": "Yellow",
-            "Z": "Zebra",
+            "Z": "Zebra"
         }
     }
 }
