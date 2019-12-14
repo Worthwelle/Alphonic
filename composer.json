@@ -1,7 +1,7 @@
 {
     "name": "worthwelle/alphonic",
     "type": "library",
-    "description": "Spell out strings using a variety of popular phonetic alphabets from around the world, including the NATO Phonetic Alphabet.",
+    "description": "A library for converting strings into and from phonetic spellings for use over the phone, a radio or other unclear communications channels. Alphonic provides these conversions not only using the standard NATO alphabet, but also various other phonetic alphabets, making it perfect for easily converting strings with historical accuracy.",
     "license": "GPL-3.0-or-later",
     "homepage": "https://worthwelle.com",
     "keywords": ["phonetic", "tool", "generator", "alphabet", "dictionary", "encode", "decode", "international phonetic alphabet"],
