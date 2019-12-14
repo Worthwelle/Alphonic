@@ -17,13 +17,13 @@ class Alphabet {
 
     // Constructor
     public function __construct($json) {
-        if (!$this->validate_json($json)) {
+        if ($json == null || !$this->validate_json($json)) {
             throw new InvalidAlphabetException();
         }
 
         $this->add_symbols($json->alphabets->en);
         $this->code = strtoupper($json->code);
-        $this->title = $json->title->en;
+        $this->title = is_array($json->title->en) ? $json->title->en[0] : $json->title->en;
         if (isset($json->description)) {
             $this->description = $json->description;
         }

@@ -20,7 +20,7 @@ class Alphonic {
                     $this->add_alphabet_from_file($file);
                 } catch (InvalidAlphabetException $e) {
                     if (!$skip_invalid) {
-                        throw $e;
+                        throw new InvalidAlphabetException($file);
                     }
                 }
             }
