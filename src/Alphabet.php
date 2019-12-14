@@ -32,6 +32,18 @@ class Alphabet {
         }
         $this->case_sensitive = isset($json->case_sensitive) ? $json->case_sensitive : false;
     }
+    
+    public static function from_json($json) {
+        $decoded_json = json_decode($json);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new InvalidAlphabetException();
+        }
+        return new Alphabet($decoded_json);
+    }
+    
+    public static function from_file($filename) {
+        return Alphabet::from_json(file_get_contents($filename));
+    }
 
     public function validate_json($json) {
         $validator = new \JsonSchema\Validator();

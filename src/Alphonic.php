@@ -28,12 +28,13 @@ class Alphonic {
     }
 
     public function add_alphabet_from_json($json) {
-        $alpha = new Alphabet(json_decode($json));
-        $this->alphabets[strtoupper($alpha->code)] = $alpha;
+        $alpha = Alphabet::from_json($json);
+        $this->alphabets[$alpha->code] = $alpha;
     }
 
     public function add_alphabet_from_file($filename) {
-        $this->add_alphabet_from_json(file_get_contents($filename));
+        $alpha = Alphabet::from_file($filename);
+        $this->alphabets[$alpha->code] = $alpha;
     }
 
     public function get_title($alpha) {
