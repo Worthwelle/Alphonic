@@ -183,8 +183,8 @@ class Alphabet {
     }
 
     public function clean_whitespace($string) {
-        $string = preg_replace("/[^\S\n ]+/", ' ', $string);
-        $string = preg_replace("/ *\n[\n ]+/", "\n", $string);
+        $string = preg_replace("/[^\S\r\n ]+/", ' ', $string);
+        $string = preg_replace("/ *(\r\n|\r|\n) */", "$1", $string);
 
         return preg_replace('/ +/', ' ', $string);
     }
