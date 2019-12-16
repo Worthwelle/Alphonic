@@ -1,9 +1,9 @@
 {
-    "code": "ICAO1947",
+    "code": "ICAO1946",
     "title": {
         "en": "ICAO Second Session of the Communications Division (1946)"
     },
-    "description": "",
+    "description": "The phonetic alphabet used by the International Civil Aciation Organization in 1946.",
     "source": "https://www.governmentattic.org/4docs/ICAO-WordSpellingAlphabet_1959.pdf",
     "alphabets": {
         "en": {

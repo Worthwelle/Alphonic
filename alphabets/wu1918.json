@@ -2,11 +2,12 @@
     "code": "WU1918",
     "title": {
         "en": [
+            "Western Union (1918)",
             "American Radio Relay League (1930)",
-            "Western Union (1918)"
+            "American Association of Railroads (1932)"
         ]
     },
-    "description": "",
+    "description": "The phonetic spelling alphabet created by Western Union in 1918.",
     "source": "https://www.governmentattic.org/4docs/ICAO-WordSpellingAlphabet_1959.pdf",
     "alphabets": {
         "en": {
@@ -27,7 +28,7 @@
             "O": "Ocean",
             "P": "Peter",
             "Q": "Queen",
-            "R": "Ropert",
+            "R": "Robert",
             "S": "Sugar",
             "T": "Thomas",
             "U": "Union",

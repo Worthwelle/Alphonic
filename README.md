@@ -67,6 +67,11 @@ $alphonic2 = new Alphonic('directory/full/of/alphabets', true);
 
 
 
+## Known Issues
+
+* Localizations are currently not supported and alphabets require titles and symbols utilizing the "en" localization.
+* During early development the JSON schema is likely to change without notice. Once v1.0 is formalized, this will become the standard going forward.
+
 ## Running the tests
 
 ```bash
@@ -85,8 +90,31 @@ Currently supported alphabets:
 
 | Code | Alphabet Title |
 |------|----------------|
-| `NATO` | NATO phonetic alphabet (2008 respelling)<br>International Radiotelephony Spelling Alphabet<br>ICAO phonetic alphabet |
-| `UECU1920` | Universal Electrical Communications Union (1920) |
-| `CCIR1927` | International Radiotelegraph Convention (1927) |
-| `CCIR-ICAN1932` | General Radiocommunication and Additional Regulations (1932) |
+| `APCO1941` | Association of Public-Safety Communications Officials-International (1941) |
+| `APCO1967` | Association of Public-Safety Communications Officials-International Project 2 (1967) |
+| `APCO1974` | Association of Public-Safety Communications Officials-International Project 14 (1974) |
+| `ARRL1936` | American Radio Relay League (1936) |
+| `CCBUSUK1943` | Combined Communications Board (1943) |
+| `CCIR-ICAN1932` | General Radiocommunication and Additional Regulations (CCIR/ICAN, 1932) |
+| `CCIR1927` | General Radiotelegraph Regulations (1927) |
+| `ICAO1946` | ICAO Second Session of the Communications Division (1946) |
+| `IRC1947` | Radio Regulations and Additional Radio Regulations (Atlantic City, 1947) |
 | `IRCC1938` | International Radiocommunication Conference (Cairo, 1938) |
+| `LVMPD` | Las Vegas Metropolitan Police Department |
+| `NATO` | NATO Phonetic Alphabet |
+| `NATO1956` | NATO Phonetic Alphabet (Jan 1 - Feb 29, 1956) |
+| `UECU1920` | Universal Electrical Communications Union (1920) |
+| `USAFM2412-1943` | U.S. Army Field Manual 24-12 (1943-1955) |
+| `USAFM245-1939` | U.S. Army Field Manual 24-5 (1939-1943) |
+| `USAFM245-1941` | U.S. Army Field Manual 24-5 (1941-1943) |
+| `USAS1919` | U.S. Air Service (1919) |
+| `USASB1916` | U.S. Army Signal Book (1916-1939) |
+| `USJAN1941` | U.S. Joint Army/Navy (1941-1943) |
+| `USJAN1941A` | U.S. Joint Army/Navy variant (1941-1943) |
+| `USN1908-1` | U.S. Navy (1908; Version 1) |
+| `USN1908-2` | U.S. Navy (1908; Version 2) |
+| `USN1913` | U.S. Navy (1913-1926) |
+| `USN1927` | U.S. Navy (1927-1937) |
+| `USN1938` | U.S. Navy (1938) |
+| `USNWW2` | U.S. Navy World War II |
+| `WU1918` | Western Union (1918) |

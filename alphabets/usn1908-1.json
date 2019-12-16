@@ -1,9 +1,9 @@
 {
     "code": "USN1908-1",
     "title": {
-        "en": "U.S. Navy (Version 1)"
+        "en": "U.S. Navy (1908; Version 1)"
     },
-    "description": "Used for calling out flags to be hoisted in a signal on the deck of a ship.",
+    "description": "One of the phonetic alphabets used by the U.S. Navy in 1908 for calling out flags to be hoisted in a signal on the deck of a ship.",
     "source": "https://books.google.com/books?id=dDczAQAAMAAJ&pg=PA82&lpg=PA82&dq=United+States+Navy+General+Signal+Book&source=bl&ots=pUpnCCjDDQ&sig=awa08PCeV1toGpNnqo6CC8tNRLo&hl=en&sa=X&ved=0ahUKEwjn-JP1hJ_ZAhUP42MKHfNVBsAQ6AEILTAB#v=onepage&q=United%20States%20Navy%20General%20Signal%20Book&f=false",
     "alphabets": {
         "en": {

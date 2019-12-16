@@ -1,9 +1,9 @@
 {
     "code": "APCO1974",
     "title": {
-        "en": "Association of Public-Safety Communications Officials-International Project 14(1974)"
+        "en": "Association of Public-Safety Communications Officials-International Project 14 (1974)"
     },
-    "description": "",
+    "description": "The phonetic alphabet used by the Association of Public-Safety Communications Officials-International in 1974 for use by police departments and emergency service agencies. This alphabet is rarely used and is nearly identical to the ICAO alphabet.",
     "source": "https://archive.org/details/nationaltraining025505mbp",
     "alphabets": {
         "en": {
