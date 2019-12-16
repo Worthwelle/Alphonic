@@ -32,15 +32,16 @@ class Alphabet {
         }
         $this->case_sensitive = isset($json->case_sensitive) ? $json->case_sensitive : false;
     }
-    
+
     public static function from_json($json) {
         $decoded_json = json_decode($json);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new InvalidAlphabetException();
         }
+
         return new Alphabet($decoded_json);
     }
-    
+
     public static function from_file($filename) {
         return Alphabet::from_json(file_get_contents($filename));
     }
@@ -126,32 +127,39 @@ class Alphabet {
         return $this->source;
     }
 
-    public function phonetify($string, $ipa = false) {
+    public function phonetify($string) {
+        $string = $this->clean_whitespace($string);
+        $lines = explode("\n", $string);
         $phonetic = array();
-        if (!$ipa) {
-            foreach (str_split($string) as $char) {
-                $symbol = $this->get_symbol_represenation($char);
-                if ($symbol != null) {
-                    $phonetic[] = $symbol;
-                }
+        if (count($lines) > 1) {
+            $results = array();
+            foreach ($lines as $line) {
+                $results[] = $this->phonetify($line);
             }
 
-            return implode(' ', $phonetic);
+            return implode("\n", $results);
         }
-        $ipa = array();
         foreach (str_split($string) as $char) {
-            $symbol = $this->get_symbol_represenation($char, true);
+            $symbol = $this->get_symbol_represenation($char);
             if ($symbol != null) {
-                list($phonet, $pron) = $symbol;
-                $phonetic[] = $phonet;
-                $ipa[] = $pron . ' ';
+                $phonetic[] = $symbol;
             }
         }
 
-        return array(implode(' ', $phonetic), implode(' ', $ipa));
+        return implode(' ', $phonetic);
     }
 
     public function unphonetify($string) {
+        $string = $this->clean_whitespace($string);
+        $lines = explode("\n", $string);
+        $phonetic = array();
+        if (count($lines) > 1) {
+            foreach ($lines as $line) {
+                $phonetic[] = $this->unphonetify($line);
+            }
+
+            return implode("\n", $phonetic);
+        }
         foreach (explode(' ', $string) as $rep) {
             $symbol = $this->get_symbol_from_represenation($rep);
             if ($symbol != null) {
@@ -160,5 +168,12 @@ class Alphabet {
         }
 
         return implode('', $phonetic);
+    }
+
+    public function clean_whitespace($string) {
+        $string = preg_replace("/[^\S\n ]+/", ' ', $string);
+        $string = preg_replace("/ *\n[\n ]+/", "\n", $string);
+
+        return preg_replace('/ +/', ' ', $string);
     }
 }
