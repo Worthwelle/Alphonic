@@ -127,6 +127,10 @@ class Alphabet {
         return $this->title;
     }
 
+    public function get_code() {
+        return $this->code;
+    }
+
     public function get_description() {
         return $this->description;
     }
