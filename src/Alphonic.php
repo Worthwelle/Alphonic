@@ -64,22 +64,22 @@ class Alphonic {
         return $this->alphabets[$alpha]->get_source();
     }
 
-    public function phonetify($string, $alpha, $ipa = false) {
+    public function phonetify($string, $alpha, $return_missing = false) {
         $alpha = strtoupper($alpha);
         if (!isset($this->alphabets[$alpha])) {
             throw new AlphabetNotFoundException();
         }
 
-        return $this->alphabets[$alpha]->phonetify($string, $ipa);
+        return $this->alphabets[$alpha]->phonetify($string, $return_missing);
     }
 
-    public function unphonetify($string, $alpha) {
+    public function unphonetify($string, $alpha, $return_missing = false) {
         $alpha = strtoupper($alpha);
         if (!isset($this->alphabets[$alpha])) {
             throw new AlphabetNotFoundException();
         }
 
-        return $this->alphabets[$alpha]->unphonetify($string);
+        return $this->alphabets[$alpha]->unphonetify($string, $return_missing);
     }
 
     public function &alphabet($alpha) {

@@ -68,25 +68,32 @@ class Alphabet {
         if (!$this->case_sensitive) {
             $symbol = strtoupper($symbol);
         }
-        if( !$overwrite && isset($this->alphabet[$symbol]) ) return false;
+        if (!$overwrite && isset($this->alphabet[$symbol])) {
+            return false;
+        }
         $this->alphabet[$symbol] = $representation;
         $this->unalphabet[$representation] = $symbol;
         $this->dirty = true;
+
         return isset($this->alphabet[$symbol]);
     }
 
-    public function get_symbol_represenation($symbol) {
+    public function get_symbol_represenation($symbol, $return_missing = false) {
         if (!$this->case_sensitive) {
             $symbol = strtoupper($symbol);
         }
         if (!isset($this->alphabet[$symbol])) {
+            if ($return_missing) {
+                return $symbol;
+            }
+
             return null;
         }
 
         return $this->alphabet[$symbol];
     }
 
-    public function get_symbol_from_represenation($rep) {
+    public function get_symbol_from_represenation($rep, $return_missing = false) {
         $search_array = $this->unalphabet;
         if (!$this->case_sensitive) {
             if ($this->dirty) {
@@ -100,6 +107,10 @@ class Alphabet {
         }
 
         if (!isset($search_array[$rep])) {
+            if ($return_missing) {
+                return $rep;
+            }
+
             return null;
         }
 
@@ -124,20 +135,20 @@ class Alphabet {
         return $this->source;
     }
 
-    public function phonetify($string) {
+    public function phonetify($string, $return_missing = false) {
         $string = $this->clean_whitespace($string);
         $lines = explode("\n", $string);
         $phonetic = array();
         if (count($lines) > 1) {
             $results = array();
             foreach ($lines as $line) {
-                $results[] = $this->phonetify($line);
+                $results[] = $this->phonetify($line, $return_missing);
             }
 
             return implode("\n", $results);
         }
         foreach (str_split($string) as $char) {
-            $symbol = $this->get_symbol_represenation($char);
+            $symbol = $this->get_symbol_represenation($char, $return_missing);
             if ($symbol != null) {
                 $phonetic[] = $symbol;
             }
@@ -146,19 +157,19 @@ class Alphabet {
         return implode(' ', $phonetic);
     }
 
-    public function unphonetify($string) {
+    public function unphonetify($string, $return_missing = false) {
         $string = $this->clean_whitespace($string);
         $lines = explode("\n", $string);
         $phonetic = array();
         if (count($lines) > 1) {
             foreach ($lines as $line) {
-                $phonetic[] = $this->unphonetify($line);
+                $phonetic[] = $this->unphonetify($line, $return_missing);
             }
 
             return implode("\n", $phonetic);
         }
         foreach (explode(' ', $string) as $rep) {
-            $symbol = $this->get_symbol_from_represenation($rep);
+            $symbol = $this->get_symbol_from_represenation($rep, $return_missing);
             if ($symbol != null) {
                 $phonetic[] = $symbol;
             }
