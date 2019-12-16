@@ -53,9 +53,9 @@ class Alphabet {
         return $validator->isValid();
     }
 
-    public function add_symbols($alphabet) {
+    public function add_symbols($alphabet, $overwrite = true) {
         foreach ($alphabet as $key => $value) {
-            $this->add_symbol($key, $value);
+            $this->add_symbol($key, $value, $overwrite);
         }
     }
 
@@ -64,29 +64,26 @@ class Alphabet {
         $this->dirty = true;
     }
 
-    public function add_symbol($symbol, $representation, $ipa = null) {
+    public function add_symbol($symbol, $representation, $overwrite = true) {
         if (!$this->case_sensitive) {
             $symbol = strtoupper($symbol);
         }
-        $this->alphabet[$symbol] = array(
-            $representation, $ipa
-        );
+        if( !$overwrite && isset($this->alphabet[$symbol]) ) return false;
+        $this->alphabet[$symbol] = $representation;
         $this->unalphabet[$representation] = $symbol;
         $this->dirty = true;
+        return isset($this->alphabet[$symbol]);
     }
 
-    public function get_symbol_represenation($symbol, $ipa = false) {
+    public function get_symbol_represenation($symbol) {
         if (!$this->case_sensitive) {
             $symbol = strtoupper($symbol);
         }
         if (!isset($this->alphabet[$symbol])) {
             return null;
         }
-        if ($ipa) {
-            return $this->alphabet[$symbol];
-        }
 
-        return $this->alphabet[$symbol][0];
+        return $this->alphabet[$symbol];
     }
 
     public function get_symbol_from_represenation($rep) {
