@@ -37,49 +37,32 @@ class Alphonic {
         $this->alphabets[$alpha->code] = $alpha;
     }
 
-    public function get_title($alpha) {
-        $alpha = strtoupper($alpha);
-        if (!isset($this->alphabets[$alpha])) {
-            throw new AlphabetNotFoundException();
-        }
+    public function get_code($alpha) {
+        return $this->alphabet($alpha)->get_code();
+    }
 
-        return $this->alphabets[$alpha]->get_title();
+    public function get_title($alpha) {
+        return $this->alphabet($alpha)->get_title();
     }
 
     public function get_description($alpha) {
-        $alpha = strtoupper($alpha);
-        if (!isset($this->alphabets[$alpha])) {
-            throw new AlphabetNotFoundException();
-        }
-
-        return $this->alphabets[$alpha]->get_description();
+        return $this->alphabet($alpha)->get_description();
     }
 
     public function get_source($alpha) {
-        $alpha = strtoupper($alpha);
-        if (!isset($this->alphabets[$alpha])) {
-            throw new AlphabetNotFoundException();
-        }
-
-        return $this->alphabets[$alpha]->get_source();
+        return $this->alphabet($alpha)->get_source();
+    }
+    
+    public function get_alphabets() {
+        return $this->alphabets;
     }
 
     public function phonetify($string, $alpha, $return_missing = false) {
-        $alpha = strtoupper($alpha);
-        if (!isset($this->alphabets[$alpha])) {
-            throw new AlphabetNotFoundException();
-        }
-
-        return $this->alphabets[$alpha]->phonetify($string, $return_missing);
+        return $this->alphabet($alpha)->phonetify($string, $return_missing);
     }
 
     public function unphonetify($string, $alpha, $return_missing = false) {
-        $alpha = strtoupper($alpha);
-        if (!isset($this->alphabets[$alpha])) {
-            throw new AlphabetNotFoundException();
-        }
-
-        return $this->alphabets[$alpha]->unphonetify($string, $return_missing);
+        return $this->alphabet($alpha)->unphonetify($string, $return_missing);
     }
 
     public function &alphabet($alpha) {
