@@ -8,61 +8,6 @@ use Worthwelle\Alphonic\Exception\AlphabetNotFoundException;
 use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 
 class AlphonicTest extends TestCase {
-    private $nato_json = <<<NATO
-{
-    "code": "NATO",
-    "title": {
-        "en": [
-            "NATO Phonetic Alphabet",
-            "International Radiotelephony Spelling Alphabet",
-            "ICAO phonetic alphabet"
-        ]
-    },
-    "description": "The most widely used radiotelephone spelling alphabet. It is officially the International Radiotelephony Spelling Alphabet, and also commonly known as the ICAO phonetic alphabet, with a variation officially known as the ITU phonetic alphabet and figure code.",
-    "source": "https://www.icao.int/Pages/AlphabetRadiotelephony.aspx",
-    "alphabets": {
-        "en": {
-            "A": "Alfa",
-            "B": "Bravo",
-            "C": "Charlie",
-            "D": "Delta",
-            "E": "Echo",
-            "F": "Foxtrot",
-            "G": "Golf",
-            "H": "Hotel",
-            "I": "India",
-            "J": "Juliett",
-            "K": "Kilo",
-            "L": "Lima",
-            "M": "Mike",
-            "N": "November",
-            "O": "Oscar",
-            "P": "Papa",
-            "Q": "Quebec",
-            "R": "Romeo",
-            "S": "Sierra",
-            "T": "Tango",
-            "U": "Uniform",
-            "V": "Victor",
-            "W": "Whiskey",
-            "X": "Xray",
-            "Y": "Yankee",
-            "Z": "Zulu",
-            "1": "One",
-            "2": "Two",
-            "3": "Three",
-            "4": "Four",
-            "5": "Five",
-            "6": "Six",
-            "7": "Seven",
-            "8": "Eight",
-            "9": "Niner",
-            "0": "Zero"
-        }
-    }
-}
-NATO;
-
     /**
      * Load alphabets.
      *
@@ -87,7 +32,7 @@ NATO;
 
     public function testAddAlphabetFromJSON() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json($this->nato_json);
+        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
@@ -99,19 +44,19 @@ NATO;
 
     public function testPhonetifyString() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json($this->nato_json);
+        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->phonetify('Testing', 'nato'), 'Tango Echo Sierra Tango India November Golf');
     }
 
     public function testUnphonetifyString() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json($this->nato_json);
+        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->unphonetify('Tango Echo Sierra Tango India November Golf', 'nato'), 'TESTING');
     }
 
     public function testGetTitle() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json($this->nato_json);
+        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
@@ -123,7 +68,7 @@ NATO;
 
     public function testGetDescription() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json($this->nato_json);
+        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->get_description('nato'), 'The most widely used radiotelephone spelling alphabet. It is officially the International Radiotelephony Spelling Alphabet, and also commonly known as the ICAO phonetic alphabet, with a variation officially known as the ITU phonetic alphabet and figure code.');
     }
 
@@ -135,7 +80,7 @@ NATO;
 
     public function testGetSource() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json($this->nato_json);
+        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->get_source('nato'), 'https://www.icao.int/Pages/AlphabetRadiotelephony.aspx');
     }
 
