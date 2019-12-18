@@ -27,9 +27,12 @@ class Alphonic {
         }
     }
 
-    public function add_alphabet_from_json($json) {
-        $alpha = Alphabet::from_json($json);
+    public function add_alphabet_from_object($alpha) {
         $this->alphabets[$alpha->code] = $alpha;
+    }
+
+    public function add_alphabet_from_json($json) {
+        $this->add_alphabet_from_object(Alphabet::from_json($json));
     }
 
     public function add_alphabet_from_file($filename) {
@@ -52,7 +55,7 @@ class Alphonic {
     public function get_source($alpha) {
         return $this->alphabet($alpha)->get_source();
     }
-    
+
     public function get_alphabets() {
         return $this->alphabets;
     }
