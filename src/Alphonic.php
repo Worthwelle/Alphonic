@@ -8,11 +8,13 @@ use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 class Alphonic {
     public $alphabets = array();
 
-    // Constructor
-    public function __construct() {
-    }
-
-    public function load_alphabets($directories = array(__DIR__ . '/../alphabets'), $skip_invalid = false) {
+    public function load_alphabets($directories = __DIR__ . '/../alphabets', $skip_invalid = false) {
+        if (is_string($directories)) {
+            $directories = array($directories);
+        }
+        if (!is_array($directories)) {
+            throw new \InvalidArgumentException();
+        }
         foreach ($directories as $dir) {
             $files = glob("$dir/*.json");
             foreach ($files as $file) {
