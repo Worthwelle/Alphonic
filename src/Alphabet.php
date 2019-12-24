@@ -1,6 +1,7 @@
 <?php
 
-/* This file is part of the Alphony package.
+/**
+ * This file is part of the Alphony package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -52,6 +53,12 @@ class Alphabet {
      * @var array
      */
     protected $alphabet;
+    /**
+     * Contains a list of representations of more than one word, grouped by number of words.
+     *
+     * @var array
+     */
+    protected $multiword = array();
     /**
      * Contains the reverse of $alphabet to allow unphonetifying strings.
      *
@@ -185,8 +192,17 @@ class Alphabet {
         if (!$overwrite && isset($this->alphabet[$symbol])) {
             return false;
         }
+
+        $representation = $this->clean_whitespace($representation);
+        $count = count(explode(' ', $representation));
         $this->alphabet[$symbol] = $representation;
-        $this->unalphabet[$representation] = $symbol;
+        if ($count > 1) {
+            $clean_representation = $this->clean_representation($representation);
+            $this->multiword[$count][] = $representation;
+            $this->unalphabet[$clean_representation] = $symbol;
+        } else {
+            $this->unalphabet[$representation] = $symbol;
+        }
         $this->dirty = true;
 
         return isset($this->alphabet[$symbol]);
@@ -241,6 +257,15 @@ class Alphabet {
         }
 
         return $search_array[$representation];
+    }
+
+    /**
+     * Removes spaces from a symbol representation.
+     *
+     * @return string the representation without spaces
+     */
+    public function clean_representation($representation) {
+        return str_replace(' ', '-', $representation);
     }
 
     /**
@@ -343,6 +368,7 @@ class Alphabet {
      */
     public function unphonetify($string, $return_missing = false) {
         $string = $this->clean_whitespace($string);
+        $string = $this->replace_multiword($string);
         $lines = explode("\n", $string);
         $phonetic = array();
         if (count($lines) > 1) {
@@ -360,6 +386,27 @@ class Alphabet {
         }
 
         return implode('', $phonetic);
+    }
+
+    /**
+     * Replace all multi-word representations in a string with a cleaned version to allow for replacement.
+     *
+     * @param string $string the string to prepare
+     *
+     * @return string the prepared string
+     */
+    public function replace_multiword($string) {
+        if (count($this->multiword) < 1) {
+            return $string;
+        }
+        rsort($this->multiword);
+        foreach ($this->multiword as $count) {
+            foreach ($count as $word) {
+                $string = str_replace($word, $this->clean_representation($word), $string);
+            }
+        }
+
+        return $string;
     }
 
     /**
