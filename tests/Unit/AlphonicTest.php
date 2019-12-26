@@ -17,7 +17,39 @@ use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 
 class AlphonicTest extends TestCase {
     /**
+     * Validate included alphabets
+     *
+     * @return void
+     */
+    public function testValidateIncludedAlphabets() {
+        $constants = get_defined_constants(true);
+        $json_errors = array();
+        foreach ($constants['json'] as $name => $value) {
+            if (!strncmp($name, 'JSON_ERROR_', 11)) {
+                $json_errors[$value] = $name;
+            }
+        }
+        unset($constants);
+
+        $files = glob(__DIR__ . '/../../alphabets/*.json');
+        foreach ($files as $file) {
+            $json = @file_get_contents($file);
+            $this->assertNotFalse($json, "Could not open file: $file");
+
+            $decoded_json = json_decode($json);
+            $this->assertEquals(json_last_error(), JSON_ERROR_NONE, "Could not decode file: $file. Error: " . $json_errors[json_last_error()]);
+
+            $validator = new \JsonSchema\Validator();
+            $validator->validate($decoded_json, (object) array('$ref' => 'file://' . __DIR__ . '/../../resources/alphabet_schema.json'));
+
+            $this->assertTrue($validator->isValid(), "Could not validate file: $file. First error: [" . @$validator->getErrors()[0]['property'] . '] ' . @$validator->getErrors()[0]['message']);
+        }
+    }
+
+    /**
      * Load the standard alphabets.
+     *
+     * @depends testValidateIncludedAlphabets
      *
      * @return void
      */
@@ -126,6 +158,13 @@ class AlphonicTest extends TestCase {
         $alphonic->get_source('nato');
     }
 
+    /**
+     * Retrieve the alphabets from an Alphonic instance.
+     *
+     * @depends testValidateIncludedAlphabets
+     *
+     * @return void
+     */
     public function testGetAlphabets() {
         $alphonic = new Alphonic();
         $alphonic->load_alphabets();
