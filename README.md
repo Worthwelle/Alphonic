@@ -76,6 +76,8 @@ $alphonic2 = new Alphonic('directory/full/of/alphabets', true);
 
 ```bash
 composer test                            # run all unit tests
+composer coverage                        # run unit tests and report code coverage
+composer coverage-report                 # run unit tests and provide a thorough code coverage report
 composer testOnly TestClass              # run specific unit test class
 composer testOnly TestClass::testMethod  # run specific unit test method
 composer style-check                     # check code style for errors
