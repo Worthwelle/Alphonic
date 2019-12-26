@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This file is part of the Alphony package.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Unit;
 
 use Tests\TestCase;
@@ -26,7 +33,7 @@ class AlphabetTest extends TestCase {
      */
     public function testLoadAlphabetFromJSON() {
         $alpha = Alphabet::from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
-        $this->assertEquals($alpha->code, 'NATO');
+        $this->assertEquals($alpha->get_code(), 'NATO');
     }
 
     /**
@@ -38,7 +45,7 @@ class AlphabetTest extends TestCase {
      */
     public function testLoadAlphabetFromFile() {
         $alpha = Alphabet::from_file(__DIR__ . '/../../resources/test_alphabets/valid_nato.json');
-        $this->assertEquals($alpha->code, 'NATO');
+        $this->assertEquals($alpha->get_code(), 'NATO');
     }
 
     /**
@@ -251,6 +258,37 @@ class AlphabetTest extends TestCase {
     }
 
     /**
+     * Convert a string containing extraneous whitespace to phonetics.
+     *
+     * @return void
+     */
+    public function testPhonetifyStringWithExtraneousWhitespace() {
+        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $this->assertEquals($alpha->phonetify("NA \tT\tO"), 'November Alfa Tango Oscar');
+    }
+
+    /**
+     * Convert a string containing newlines to phonetics.
+     *
+     * @return void
+     */
+    public function testPhonetifyStringWithNewlines() {
+        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $this->assertEquals($alpha->phonetify("NA\nTO"), "November Alfa\nTango Oscar");
+    }
+
+    /**
+     * Convert a string to phonetics with an alphabet containing a multiword symbol representation.
+     *
+     * @return void
+     */
+    public function testPhonetifyStringMultiword() {
+        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha->add_symbol('N', 'New York');
+        $this->assertEquals($alpha->phonetify('NATO'), 'New York Alfa Tango Oscar');
+    }
+
+    /**
      * Convert an alphabet to case-sensitive and convert a phonetic string to a string.
      *
      * @return void
@@ -263,5 +301,26 @@ class AlphabetTest extends TestCase {
         $alpha->add_symbol('o', 'oscar');
         $alpha->add_symbol('t', 'tango');
         $this->assertEquals($alpha->unphonetify('November alfa Tango oscar'), 'NaTo');
+    }
+
+    /**
+     * Convert a phonetic string containing newlines to a string.
+     *
+     * @return void
+     */
+    public function testUnphonetifyStringWithNewlines() {
+        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $this->assertEquals($alpha->unphonetify("November Alfa\nTango Oscar"), "NA\nTO");
+    }
+
+    /**
+     * Convert a phonetic string to a string with an alphabet containing a multiword symbol representation.
+     *
+     * @return void
+     */
+    public function testUnphonetifyStringMultiword() {
+        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha->add_symbol('N', 'New York');
+        $this->assertEquals($alpha->unphonetify('New York Alfa Tango Oscar'), 'NATO');
     }
 }
