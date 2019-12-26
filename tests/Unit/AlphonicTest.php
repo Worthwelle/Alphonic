@@ -91,6 +91,11 @@ class AlphonicTest extends TestCase {
         $this->assertNull($alphonic->load_alphabets(__DIR__ . '/../../resources/test_alphabets', true));
     }
 
+    /**
+     * Add an existing Alphabet object.
+     *
+     * @return void
+     */
     public function testAddAlphabetFromObject() {
         $alpha = Alphabet::from_file(__DIR__ . '/../../resources/test_alphabets/valid_nato.json');
         $alphonic = new Alphonic();
@@ -98,60 +103,110 @@ class AlphonicTest extends TestCase {
         $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
+    /**
+     * Add an alphabet from a JSON string.
+     *
+     * @return void
+     */
     public function testAddAlphabetFromJSON() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
+    /**
+     * Add an alphabet from a JSON file.
+     *
+     * @return void
+     */
     public function testAddAlphabetFromFile() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_file(__DIR__ . '/../../alphabets/nato.json');
         $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
+    /**
+     * Encode (phonetify) a standard string using a given alphabet.
+     *
+     * @return void
+     */
     public function testPhonetifyString() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->phonetify('Testing', 'nato'), 'Tango Echo Sierra Tango India November Golf');
     }
 
+    /**
+     * Decode (unphonetify) a standard string using a given alphabet.
+     *
+     * @return void
+     */
     public function testUnphonetifyString() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->unphonetify('Tango Echo Sierra Tango India November Golf', 'nato'), 'TESTING');
     }
 
+    /**
+     * Retrieve the title of an alphabet.
+     *
+     * @return void
+     */
     public function testGetTitle() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
+    /**
+     * Retrieve the title of a missing alphabet and verify an exception is thrown.
+     *
+     * @return void
+     */
     public function testGetTitleFromInvalidAlphabet() {
         $alphonic = new Alphonic();
         $this->expectException(AlphabetNotFoundException::class);
         $alphonic->get_title('nato');
     }
 
+    /**
+     * Retrieve the description of an alphabet.
+     *
+     * @return void
+     */
     public function testGetDescription() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->get_description('nato'), 'The most widely used radiotelephone spelling alphabet. It is officially the International Radiotelephony Spelling Alphabet, and also commonly known as the ICAO phonetic alphabet, with a variation officially known as the ITU phonetic alphabet and figure code.');
     }
 
+    /**
+     * Retrieve the description of a missing alphabet and verify an exception is thrown.
+     *
+     * @return void
+     */
     public function testGetDescriptionFromInvalidAlphabet() {
         $alphonic = new Alphonic();
         $this->expectException(AlphabetNotFoundException::class);
         $alphonic->get_description('nato');
     }
 
+    /**
+     * Retrieve the source of an alphabet.
+     *
+     * @return void
+     */
     public function testGetSource() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $this->assertEquals($alphonic->get_source('nato'), 'https://www.icao.int/Pages/AlphabetRadiotelephony.aspx');
     }
 
+    /**
+     * Retrieve the source of a missing alphabet and verify an exception is thrown.
+     *
+     * @return void
+     */
     public function testGetSourceFromInvalidAlphabet() {
         $alphonic = new Alphonic();
         $this->expectException(AlphabetNotFoundException::class);
