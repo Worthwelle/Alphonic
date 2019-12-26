@@ -38,6 +38,7 @@
     },
     "scripts": {
         "coverage": "phpunit --verbose --fail-on-warning --coverage-text",
+        "coverage-report": "phpunit --verbose --fail-on-warning --coverage-html coverage",
         "style-check": "php-cs-fixer fix --dry-run --verbose --diff",
         "style-fix": "php-cs-fixer fix --verbose",
         "test": "phpunit --verbose --fail-on-warning",
