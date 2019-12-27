@@ -64,7 +64,7 @@ class Alphabet {
      *
      * @var array
      */
-    protected $unalphabet;
+    protected $unalphabet = array();
     /**
      * A cache of a case-insensitive version of $unalphabet.
      *
@@ -134,7 +134,11 @@ class Alphabet {
      * @return Alphabet a validated Alphabet
      */
     public static function from_file($filename) {
-        return Alphabet::from_json(file_get_contents($filename));
+        try {
+            return Alphabet::from_json(file_get_contents($filename));
+        } catch (InvalidAlphabetException $e) {
+            throw new InvalidAlphabetException($filename);
+        }
     }
 
     /**
@@ -191,6 +195,23 @@ class Alphabet {
         }
         if (!$overwrite && isset($this->alphabet[$symbol])) {
             return false;
+        }
+
+        $mismatched = false;
+        if (!$this->case_sensitive) {
+            $set = isset(array_change_key_case($this->unalphabet, CASE_UPPER)[strtoupper($representation)]);
+            if ($set) {
+                $mismatched = $set && @(array_change_key_case($this->unalphabet, CASE_UPPER)[strtoupper($representation)] != $this->alphabet[$symbol]);
+            }
+        } else {
+            $set = isset($this->unalphabet[$representation]);
+            if ($set) {
+                $mismatched = $set && @($this->unalphabet[$representation] != $this->alphabet[$symbol]);
+            }
+        }
+
+        if ($mismatched) {
+            throw new InvalidAlphabetException();
         }
 
         $representation = $this->clean_whitespace($representation);

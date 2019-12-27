@@ -43,6 +43,8 @@ class AlphonicTest extends TestCase {
             $validator->validate($decoded_json, (object) array('$ref' => 'file://' . __DIR__ . '/../../resources/alphabet_schema.json'));
 
             $this->assertTrue($validator->isValid(), "Could not validate file: $file. First error: [" . @$validator->getErrors()[0]['property'] . '] ' . @$validator->getErrors()[0]['message']);
+
+            $this->assertInstanceOf("Worthwelle\Alphonic\Alphabet", Alphabet::from_file($file));
         }
     }
 

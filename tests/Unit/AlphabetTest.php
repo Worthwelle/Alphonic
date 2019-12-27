@@ -93,6 +93,17 @@ class AlphabetTest extends TestCase {
     }
 
     /**
+     * Add a symbol to the alphabet with a representation that is already assigned to a different symbol.
+     *
+     * @return void
+     */
+    public function testAddSymbolWithRepresentationConflict() {
+        $this->expectException(InvalidAlphabetException::class);
+        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha->add_symbol(')', 'Alfa');
+    }
+
+    /**
      * Add multiple symbols to the alphabet and verify they are used in converting, but don't overwrite existing values.
      *
      * @return void
