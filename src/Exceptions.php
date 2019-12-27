@@ -6,8 +6,11 @@ namespace Worthwelle\Alphonic\Exception;
  * Exception that is raised when a queried alphabet is not loaded.
  */
 class AlphabetNotFoundException extends \Exception {
-    public function __construct() {
-        parent::__construct('Alphabet not found');
+    public function __construct($message = '') {
+        if ($message != '') {
+            $message = ": $message";
+        }
+        parent::__construct('Alphabet not found' . $message);
     }
 }
 
@@ -15,7 +18,10 @@ class AlphabetNotFoundException extends \Exception {
  * Exception that is raised when an alphabet being loaded is invalid due to JSON or schema issues.
  */
 class InvalidAlphabetException extends \Exception {
-    public function __construct() {
-        parent::__construct('Invalid alphabet');
+    public function __construct($message = '') {
+        if ($message != '') {
+            $message = ": $message";
+        }
+        parent::__construct('Invalid alphabet' . $message);
     }
 }
