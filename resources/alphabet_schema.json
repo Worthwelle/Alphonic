@@ -1,11 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "id": "https://www.github.com/worthwelle/alphony/resources/schema.json",
-  "properties": {
-    "code": {
-      "type": "string"
+  "type": "object",
+  "definitions": {
+    "string_optional_localization": {
+      "type": [
+        "string",
+        "object"
+      ],
+      "patternProperties": {
+        "^.*$": {
+          "type": "string"
+        }
+      }
     },
-    "title": {
+    "string_array_optional_localization": {
       "type": [
         "object",
         "string"
@@ -15,41 +24,85 @@
           "type": [
             "string",
             "array"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
-    "description": {
+    "string_or_array_of_strings": {
+      "type": [
+        "string",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "alphabet": {
+      "type": "object",
+      "minProperties": 1,
+      "oneOf": [
+        {
+          "patternProperties": {
+            "^.*$": {
+              "minProperties": 1,
+              "type": [
+                "string"
+              ],
+              "patternProperties": {
+                "^.*$": {
+                  "type": [
+                    "string"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "patternProperties": {
+            "^.*$": {
+              "minProperties": 1,
+              "type": [
+                "object"
+              ],
+              "patternProperties": {
+                "^.*$": {
+                  "type": [
+                    "string"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "properties": {
+    "code": {
       "type": "string"
     },
+    "title": {
+      "$ref": "#/definitions/string_array_optional_localization"
+    },
+    "description": {
+      "$ref": "#/definitions/string_optional_localization"
+    },
     "source": {
-      "type": "string"
+      "$ref": "#/definitions/string_or_array_of_strings"
     },
     "case_sensitive": {
       "type": "boolean"
     },
     "alphabets": {
-      "type": "object",
-      "patternProperties": {
-        "^.*$": {
-          "type": [
-            "object",
-            "string"
-          ],
-          "patternProperties": {
-            "^.*$": {
-              "type": [
-                "string"
-              ]
-            }
-          }
-        }
-      }
+      "$ref": "#/definitions/alphabet"
     }
   },
   "required": [
     "code",
-    "title",
     "alphabets"
   ]
 }

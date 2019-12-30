@@ -95,7 +95,11 @@ class Alphabet {
 
         $this->add_symbols($json->alphabets->en);
         $this->code = strtoupper($json->code);
-        $this->title = is_array($json->title->en) ? $json->title->en[0] : $json->title->en;
+        if (isset($json->title)) {
+            $this->title = is_array($json->title->en) ? $json->title->en[0] : $json->title->en;
+        } else {
+            $this->title = $this->code;
+        }
         if (isset($json->description)) {
             $this->description = $json->description;
         }

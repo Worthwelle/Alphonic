@@ -6,9 +6,9 @@
     "description": "The phonetic alphabet laid forth in Appendix 12 (Procedure in the service of low-power mobile radiotelephone stations) of the General Radiocommunication  and Additional Regulations put forward by the CCIR/ICAN in 1932.",
     "source": "http://search.itu.int/history/HistoryDigitalCollectionDocLibrary/1.5.48.en.100.pdf",
     "alphabets": {
-        "num_prefix": "As a number",
-        "num_postfix": "As a number",
         "en": {
+            "_num_prefix": "As a number",
+            "_num_postfix": "As a number",
             "A": "Amsterdam",
             "B": "Baltimore",
             "C": "Casablanca",
