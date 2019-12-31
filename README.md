@@ -10,7 +10,7 @@ A library for converting strings into and from phonetic spellings for use over t
 
 The alphabets in this library are provided not only as-is, but also as-were. That is, these alphabets are provided as they were originally defined. This means that the characters supported by each alphabet differ. Some alphabets cover only the [classical Latin alphabet](https://en.wikipedia.org/wiki/Latin_alphabet#Classical_Latin_alphabet), some include numbers, some include language-specific Latin characters (such as the various letters with [diacritical](https://en.wikipedia.org/wiki/Diacritic) marks), and some include punctuation and figure-specific characters.
 
-These limitations can be overcome using the `add_symbol` function, which allows adding characters to a particular alphabet on a one-time-only basis. A fill-in function will be provided in a future version of the library that will allow adding a list of characters only if the characters don't already exist in the alphabet. This will, naturally, be a non-standard use of the alphabet
+These limitations can be overcome using the `add_symbol` function, which allows adding characters to a particular alphabet on a one-time-only basis. To fill in only missing symbols in multiple alphabets, the `add_symbol` or `add_symbols` functions can be used with `$overwrite` set to false. This will, naturally, be a non-standard use of the alphabet.
 
 More information on creating custom alphabets will be available in the near future.
 
