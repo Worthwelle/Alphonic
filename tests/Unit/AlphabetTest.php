@@ -28,6 +28,7 @@ class AlphabetTest extends TestCase {
      * Load a valid alphabet via the from_json static method.
      *
      * @depends testLoadAlphabet
+     * @testdox Load alphabet from JSON
      *
      * @return void
      */
@@ -62,10 +63,11 @@ class AlphabetTest extends TestCase {
      * Load an invalid JSON file via the from_file static method.
      *
      * @depends testLoadAlphabet
+     * @testdox Load invalid JSON
      *
      * @return void
      */
-    public function testLoadInvalidJSON() {
+    public function testLoadInvalidJson() {
         $this->expectException(InvalidAlphabetException::class);
         $alpha = Alphabet::from_file(__DIR__ . '/../../resources/test_alphabets/invalid_json_nato.json');
     }

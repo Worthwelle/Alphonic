@@ -108,6 +108,8 @@ class AlphonicTest extends TestCase {
     /**
      * Add an alphabet from a JSON string.
      *
+     * @testdox Add alphabet from JSON
+     *
      * @return void
      */
     public function testAddAlphabetFromJSON() {
@@ -224,7 +226,7 @@ class AlphonicTest extends TestCase {
      */
     public function testGetAlphabets() {
         $alphonic = new Alphonic();
-        $alphonic->load_alphabets();
+        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
         $alphas = $alphonic->get_alphabets();
         $this->assertInstanceOf('Worthwelle\Alphonic\Alphabet', reset($alphas));
     }
