@@ -28,7 +28,10 @@ class Alphonic {
      *
      * Validates the provided PHP object, initializes the local variables of the Alphabet class and ensures that they are properly formatted.
      */
-    public function load_alphabets($directories = __DIR__ . '/../alphabets', $skip_invalid = false) {
+    public function load_alphabets($directories = null, $skip_invalid = false) {
+        if ($directories === null) {
+            $directories = array(__DIR__ . '/../alphabets');
+        }
         if (is_string($directories)) {
             $directories = array($directories);
         }
@@ -154,7 +157,7 @@ class Alphonic {
     public function &alphabet($alpha) {
         $alpha = strtoupper($alpha);
         if (!isset($this->alphabets[$alpha])) {
-            throw new AlphabetNotFoundException();
+            throw new AlphabetNotFoundException($alpha);
         }
 
         return $this->alphabets[$alpha];
