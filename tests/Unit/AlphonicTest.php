@@ -24,7 +24,12 @@ class AlphonicTest extends TestCase {
     public function testValidateIncludedAlphabets() {
         $constants = get_defined_constants(true);
         $json_errors = array();
-        foreach ($constants['json'] as $name => $value) {
+        if (isset($constants['json'])) {
+            $json_codes = $constants['json'];
+        } else {
+            $json_codes = $constants['Core'];
+        }
+        foreach ($json_codes as $name => $value) {
             if (!strncmp($name, 'JSON_ERROR_', 11)) {
                 $json_errors[$value] = $name;
             }
@@ -38,7 +43,6 @@ class AlphonicTest extends TestCase {
 
             $decoded_json = json_decode($json);
             $this->assertEquals(json_last_error(), JSON_ERROR_NONE, "Could not decode file: $file. Error: " . $json_errors[json_last_error()]);
-
             $validator = new \JsonSchema\Validator();
             $validator->validate($decoded_json, (object) array('$ref' => 'file://' . __DIR__ . '/../../resources/alphabet_schema.json'));
 
