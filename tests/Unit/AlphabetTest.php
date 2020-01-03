@@ -11,7 +11,6 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use Worthwelle\Alphonic\Alphabet;
-use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 
 class AlphabetTest extends TestCase {
     /**
@@ -55,7 +54,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testLoadInvalidAlphabet() {
-        $this->expectException(InvalidAlphabetException::class);
+        $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
         $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/invalid_nato.json')));
     }
 
@@ -68,7 +67,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testLoadInvalidJson() {
-        $this->expectException(InvalidAlphabetException::class);
+        $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
         $alpha = Alphabet::from_file(__DIR__ . '/../../resources/test_alphabets/invalid_json_nato.json');
     }
 
@@ -100,7 +99,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testAddSymbolWithRepresentationConflict() {
-        $this->expectException(InvalidAlphabetException::class);
+        $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
         $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
         $alpha->add_symbol(')', 'Alfa');
     }

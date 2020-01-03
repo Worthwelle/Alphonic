@@ -203,14 +203,26 @@ class Alphabet {
 
         $mismatched = false;
         if (!$this->case_sensitive) {
-            $set = isset(array_change_key_case($this->unalphabet, CASE_UPPER)[strtoupper($representation)]);
-            if ($set) {
-                $mismatched = $set && @(array_change_key_case($this->unalphabet, CASE_UPPER)[strtoupper($representation)] != $this->alphabet[$symbol]);
+            $unalphabet_i = array_change_key_case($this->unalphabet, CASE_UPPER);
+            $representation_i = strtoupper($representation);
+            $rep_set = isset($unalphabet_i[$representation_i]);
+            $sym_set = isset($this->alphabet[$symbol]);
+            if ($rep_set) {
+                if ($sym_set) {
+                    $mismatched = ($unalphabet_i[$representation_i] != $this->alphabet[$symbol]);
+                } else {
+                    $mismatched = true;
+                }
             }
         } else {
-            $set = isset($this->unalphabet[$representation]);
-            if ($set) {
-                $mismatched = $set && @($this->unalphabet[$representation] != $this->alphabet[$symbol]);
+            $rep_set = isset($this->unalphabet[$representation]);
+            $sym_set = isset($this->alphabet[$symbol]);
+            if ($rep_set) {
+                if ($sym_set) {
+                    $mismatched = ($this->unalphabet[$representation] != $this->alphabet[$symbol]);
+                } else {
+                    $mismatched = true;
+                }
             }
         }
 

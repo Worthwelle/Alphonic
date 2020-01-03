@@ -12,8 +12,6 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Worthwelle\Alphonic\Alphabet;
 use Worthwelle\Alphonic\Alphonic;
-use Worthwelle\Alphonic\Exception\AlphabetNotFoundException;
-use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 
 class AlphonicTest extends TestCase {
     /**
@@ -46,7 +44,16 @@ class AlphonicTest extends TestCase {
             $validator = new \JsonSchema\Validator();
             $validator->validate($decoded_json, (object) array('$ref' => 'file://' . __DIR__ . '/../../resources/alphabet_schema.json'));
 
-            $this->assertTrue($validator->isValid(), "Could not validate file: $file. First error: [" . @$validator->getErrors()[0]['property'] . '] ' . @$validator->getErrors()[0]['message']);
+            if (count($validator->getErrors()) > 0) {
+                $error_array = $validator->getErrors();
+                if (is_array($error_array[0])) {
+                    $error = $error_array[0];
+                }
+            } else {
+                $error = array('property' => '', 'message' => '');
+            }
+
+            $this->assertTrue($validator->isValid(), "Could not validate file: $file. First error: [" . $error['property'] . '] ' . $error['message']);
 
             $this->assertInstanceOf("Worthwelle\Alphonic\Alphabet", Alphabet::from_file($file));
         }
@@ -71,7 +78,7 @@ class AlphonicTest extends TestCase {
      * @return void
      */
     public function testLoadAlphabetsWithBadArgument() {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException('\InvalidArgumentException');
         $alphonic = new Alphonic();
         $alphonic->load_alphabets(123);
     }
@@ -82,7 +89,7 @@ class AlphonicTest extends TestCase {
      * @return void
      */
     public function testLoadInvalidAlphabets() {
-        $this->expectException(InvalidAlphabetException::class);
+        $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
         $alphonic = new Alphonic();
         $alphonic->load_alphabets(__DIR__ . '/../../resources/test_alphabets');
     }
@@ -173,7 +180,7 @@ class AlphonicTest extends TestCase {
      */
     public function testGetTitleFromInvalidAlphabet() {
         $alphonic = new Alphonic();
-        $this->expectException(AlphabetNotFoundException::class);
+        $this->expectException('\Worthwelle\Alphonic\Exception\AlphabetNotFoundException');
         $alphonic->get_title('nato');
     }
 
@@ -195,7 +202,7 @@ class AlphonicTest extends TestCase {
      */
     public function testGetDescriptionFromInvalidAlphabet() {
         $alphonic = new Alphonic();
-        $this->expectException(AlphabetNotFoundException::class);
+        $this->expectException('\Worthwelle\Alphonic\Exception\AlphabetNotFoundException');
         $alphonic->get_description('nato');
     }
 
@@ -217,7 +224,7 @@ class AlphonicTest extends TestCase {
      */
     public function testGetSourceFromInvalidAlphabet() {
         $alphonic = new Alphonic();
-        $this->expectException(AlphabetNotFoundException::class);
+        $this->expectException('\Worthwelle\Alphonic\Exception\AlphabetNotFoundException');
         $alphonic->get_source('nato');
     }
 
