@@ -39,7 +39,7 @@ class Alphonic {
             throw new \InvalidArgumentException();
         }
         foreach ($directories as $dir) {
-            $files = glob("$dir/*.json");
+            $files = self::streamSafeGlob("$dir", "*.json");
             foreach ($files as $file) {
                 try {
                     $this->add_alphabet_from_file($file);
@@ -50,6 +50,35 @@ class Alphonic {
                 }
             }
         }
+    }
+
+    /**
+     * Glob that is safe with streams (vfs for example)
+     *
+     * PHP's built-in glob function does not support stream wrappers.
+     *
+     * https://github.com/bovigo/vfsStream/issues/2
+     *
+     * @param string $directory
+     * @param string $filePattern
+     * @return array
+     */
+    public static function streamSafeGlob($directory, $filePattern)
+    {
+        $files = scandir($directory);
+        $found = [];
+
+        foreach ($files as $filename) {
+            if (in_array($filename, ['.', '..'])) {
+                continue;
+            }
+
+            if (fnmatch($filePattern, $filename)) {
+                $found[] = "{$directory}/{$filename}";
+            }
+        }
+
+        return $found;
     }
 
     /**
