@@ -9,11 +9,63 @@
 
 namespace Tests\Unit;
 
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 use Tests\TestCase;
 use Worthwelle\Alphonic\Alphabet;
 use Worthwelle\Alphonic\Alphonic;
 
 class AlphonicTest extends TestCase {
+    /**
+     * @var vfsStreamDirectory
+     */
+    private $root;
+
+    /**
+     * Set up test environmemt
+     */
+    public function setUp() {
+        $structure = array(
+            'alphabets' => array(
+                'nato.json'    => '{"code": "NATO","title": {"en": "NATO Phonetic Alphabet"},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}}}',
+            ),
+            'invalid' => array(
+                'invalid_nato.json' => '{"code": 123,"title": {"en": "NATO Phonetic Alphabet"},"alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie"}}}',
+                'invalid_json.json' => '{"code": "NATO2","title": {"en": "NATO Phonetic Alphabet"},"alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie"',
+            )
+        );
+        $this->root = vfsStream::setup('root', null, $structure);
+    }
+
+    /**
+     * Create a mocked up alphabet to test a specific function.
+     *
+     * @return Worthwelle\Alphonic\Alphabet
+     */
+    public function getMockNato($method = null, $return = null) {
+        $decoded_json = json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json'));
+
+        $alpha = $this->getMockBuilder('\Worthwelle\Alphonic\Alphabet')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $alpha->expects($this->any())
+            ->method('validate_json')
+            ->will($this->returnValue(true));
+
+        $reflectedClass = new \ReflectionClass('\Worthwelle\Alphonic\Alphabet');
+        $constructor = $reflectedClass->getConstructor();
+        $constructor->invoke($alpha, $decoded_json);
+
+        if ($method !== null) {
+            $alpha->expects($this->once())
+                ->method($method)
+                ->will($this->returnValue($return));
+        }
+
+        return $alpha;
+    }
+
     /**
      * Validate included alphabets
      *
@@ -21,11 +73,13 @@ class AlphonicTest extends TestCase {
      */
     public function testValidateIncludedAlphabets() {
         $constants = get_defined_constants(true);
-        $json_errors = array();
-        if (isset($constants['json'])) {
-            $json_codes = $constants['json'];
-        } else {
+        $json_codes = array();
+        // HHVM loads constants defined by extensions under the "Core" key.
+        // https://github.com/facebook/hhvm/issues/7402
+        if (defined('HHVM_VERSION')) {
             $json_codes = $constants['Core'];
+        } else {
+            $json_codes = $constants['json'];
         }
         foreach ($json_codes as $name => $value) {
             if (!strncmp($name, 'JSON_ERROR_', 11)) {
@@ -34,7 +88,7 @@ class AlphonicTest extends TestCase {
         }
         unset($constants);
 
-        $files = glob(__DIR__ . '/../../alphabets/*.json');
+        $files = Alphonic::streamSafeGlob(__DIR__ . '/../../alphabets/', '*.json');
         foreach ($files as $file) {
             $json = @file_get_contents($file);
             $this->assertNotFalse($json, "Could not open file: $file");
@@ -91,7 +145,7 @@ class AlphonicTest extends TestCase {
     public function testLoadInvalidAlphabets() {
         $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
         $alphonic = new Alphonic();
-        $alphonic->load_alphabets(__DIR__ . '/../../resources/test_alphabets');
+        $alphonic->load_alphabets(array($this->root->url() . '/invalid', $this->root->url() . '/alphabets'));
     }
 
     /**
@@ -101,7 +155,8 @@ class AlphonicTest extends TestCase {
      */
     public function testLoadIgnoreInvalidAlphabets() {
         $alphonic = new Alphonic();
-        $this->assertNull($alphonic->load_alphabets(__DIR__ . '/../../resources/test_alphabets', true));
+        $alphonic->load_alphabets(array($this->root->url() . '/invalid', $this->root->url() . '/alphabets'), true);
+        $this->assertGreaterThan(0, count($alphonic->get_alphabets()));
     }
 
     /**
@@ -109,10 +164,9 @@ class AlphonicTest extends TestCase {
      *
      * @return void
      */
-    public function testAddAlphabetFromObject() {
-        $alpha = Alphabet::from_file(__DIR__ . '/../../resources/test_alphabets/valid_nato.json');
+    public function testAddAlphabetFromObjectAndGetTitle() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_object($alpha);
+        $alphonic->add_alphabet_from_object($this->getMockNato('get_title', 'NATO Phonetic Alphabet'));
         $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
@@ -125,7 +179,7 @@ class AlphonicTest extends TestCase {
      */
     public function testAddAlphabetFromJSON() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
+        $alphonic->add_alphabet_from_json(file_get_contents($this->root->url() . '/alphabets/nato.json'));
         $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
@@ -136,7 +190,7 @@ class AlphonicTest extends TestCase {
      */
     public function testAddAlphabetFromFile() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_file(__DIR__ . '/../../alphabets/nato.json');
+        $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/nato.json');
         $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
@@ -147,7 +201,7 @@ class AlphonicTest extends TestCase {
      */
     public function testPhonetifyString() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
+        $alphonic->add_alphabet_from_object($this->getMockNato('phonetify', 'Tango Echo Sierra Tango India November Golf'));
         $this->assertEquals($alphonic->phonetify('Testing', 'nato'), 'Tango Echo Sierra Tango India November Golf');
     }
 
@@ -158,19 +212,8 @@ class AlphonicTest extends TestCase {
      */
     public function testUnphonetifyString() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
+        $alphonic->add_alphabet_from_object($this->getMockNato('unphonetify', 'TESTING'));
         $this->assertEquals($alphonic->unphonetify('Tango Echo Sierra Tango India November Golf', 'nato'), 'TESTING');
-    }
-
-    /**
-     * Retrieve the title of an alphabet.
-     *
-     * @return void
-     */
-    public function testGetTitle() {
-        $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
-        $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
     }
 
     /**
@@ -191,8 +234,8 @@ class AlphonicTest extends TestCase {
      */
     public function testGetDescription() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
-        $this->assertEquals($alphonic->get_description('nato'), 'The most widely used radiotelephone spelling alphabet. It is officially the International Radiotelephony Spelling Alphabet, and also commonly known as the ICAO phonetic alphabet, with a variation officially known as the ITU phonetic alphabet and figure code.');
+        $alphonic->add_alphabet_from_object($this->getMockNato('get_description', 'Mock description'));
+        $this->assertEquals($alphonic->get_description('nato'), 'Mock description');
     }
 
     /**
@@ -213,8 +256,8 @@ class AlphonicTest extends TestCase {
      */
     public function testGetSource() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
-        $this->assertEquals($alphonic->get_source('nato'), 'https://www.icao.int/Pages/AlphabetRadiotelephony.aspx');
+        $alphonic->add_alphabet_from_object($this->getMockNato('get_source', 'https://www.worthwelle.com/'));
+        $this->assertEquals($alphonic->get_source('nato'), 'https://www.worthwelle.com/');
     }
 
     /**
@@ -237,7 +280,7 @@ class AlphonicTest extends TestCase {
      */
     public function testGetAlphabets() {
         $alphonic = new Alphonic();
-        $alphonic->add_alphabet_from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
+        $alphonic->add_alphabet_from_object($this->getMockNato());
         $alphas = $alphonic->get_alphabets();
         $this->assertInstanceOf('Worthwelle\Alphonic\Alphabet', reset($alphas));
     }

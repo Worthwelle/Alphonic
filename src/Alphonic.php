@@ -39,7 +39,7 @@ class Alphonic {
             throw new \InvalidArgumentException();
         }
         foreach ($directories as $dir) {
-            $files = self::streamSafeGlob("$dir", "*.json");
+            $files = self::streamSafeGlob("$dir", '*.json');
             foreach ($files as $file) {
                 try {
                     $this->add_alphabet_from_file($file);
@@ -61,15 +61,15 @@ class Alphonic {
      *
      * @param string $directory
      * @param string $filePattern
+     *
      * @return array
      */
-    public static function streamSafeGlob($directory, $filePattern)
-    {
+    public static function streamSafeGlob($directory, $filePattern) {
         $files = scandir($directory);
-        $found = [];
+        $found = array();
 
         foreach ($files as $filename) {
-            if (in_array($filename, ['.', '..'])) {
+            if (in_array($filename, array('.', '..'))) {
                 continue;
             }
 

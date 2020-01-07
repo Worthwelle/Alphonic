@@ -9,17 +9,40 @@
 
 namespace Tests\Unit;
 
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 use Tests\TestCase;
 use Worthwelle\Alphonic\Alphabet;
 
 class AlphabetTest extends TestCase {
+    /**
+     * @var vfsStreamDirectory
+     */
+    private $root;
+
+    /**
+     * Set up test environmemt
+     */
+    public function setUp() {
+        $structure = array(
+            'alphabets' => array(
+                'nato.json'    => '{"code": "NATO","title": {"en": "NATO Phonetic Alphabet"},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}}}',
+            ),
+            'invalid' => array(
+                'invalid_nato.json' => '{"code": 123,"title": {"en": "NATO Phonetic Alphabet"},"alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie"}}}',
+                'invalid_json.json' => '{"code": "NATO2","title": {"en": "NATO Phonetic Alphabet"},"alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie"',
+            )
+        );
+        $this->root = vfsStream::setup('root', null, $structure);
+    }
+
     /**
      * Load a valid alphabet via the constructor.
      *
      * @return void
      */
     public function testLoadAlphabet() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->code, 'NATO');
     }
 
@@ -32,7 +55,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testLoadAlphabetFromJSON() {
-        $alpha = Alphabet::from_json(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json'));
+        $alpha = Alphabet::from_json(file_get_contents($this->root->url() . '/alphabets/nato.json'));
         $this->assertEquals($alpha->get_code(), 'NATO');
     }
 
@@ -44,7 +67,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testLoadAlphabetFromFile() {
-        $alpha = Alphabet::from_file(__DIR__ . '/../../resources/test_alphabets/valid_nato.json');
+        $alpha = Alphabet::from_file($this->root->url() . '/alphabets/nato.json');
         $this->assertEquals($alpha->get_code(), 'NATO');
     }
 
@@ -55,7 +78,7 @@ class AlphabetTest extends TestCase {
      */
     public function testLoadInvalidAlphabet() {
         $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/invalid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/invalid/invalid_nato.json')));
     }
 
     /**
@@ -68,7 +91,7 @@ class AlphabetTest extends TestCase {
      */
     public function testLoadInvalidJson() {
         $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
-        $alpha = Alphabet::from_file(__DIR__ . '/../../resources/test_alphabets/invalid_json_nato.json');
+        $alpha = Alphabet::from_file($this->root->url() . '/invalid/invalid_json.json');
     }
 
     /**
@@ -77,7 +100,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testAddSymbol() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->add_symbol(':', 'Colon');
         $this->assertEquals($alpha->phonetify('nato:'), 'November Alfa Tango Oscar Colon');
     }
@@ -88,7 +111,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testAddSymbolWithoutOverwrite() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->add_symbol('A', 'Adam', false);
         $this->assertEquals($alpha->phonetify('nato'), 'November Alfa Tango Oscar');
     }
@@ -100,7 +123,7 @@ class AlphabetTest extends TestCase {
      */
     public function testAddSymbolWithRepresentationConflict() {
         $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->add_symbol(')', 'Alfa');
     }
 
@@ -110,7 +133,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testAddSymbols() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->add_symbols(array(':' => 'Colon', ';' => 'Semicolon'));
         $this->assertEquals($alpha->phonetify('nato:;'), 'November Alfa Tango Oscar Colon Semicolon');
     }
@@ -121,7 +144,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testAddSymbolsWithoutOverwrite() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->add_symbols(array('A' => 'Adam', ':' => 'Colon', ';' => 'Semicolon'), false);
         $this->assertEquals($alpha->phonetify('nato:;'), 'November Alfa Tango Oscar Colon Semicolon');
     }
@@ -134,7 +157,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testGetSymbolRepresentation() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->get_symbol_represenation('A'), 'Alfa');
     }
 
@@ -146,7 +169,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testGetMissingSymbolRepresentation() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->get_symbol_represenation(':'), '');
     }
 
@@ -158,7 +181,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testGetMissingSymbolRepresentationReturnMissing() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->get_symbol_represenation(':', true), ':');
     }
 
@@ -170,7 +193,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testGetSymbolFromRepresentation() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->get_symbol_from_represenation('Alfa', true), 'A');
     }
 
@@ -182,7 +205,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testGetMissingSymbolFromRepresentation() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->get_symbol_from_represenation(':'), null);
     }
 
@@ -194,7 +217,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testGetMissingSymbolFromRepresentationWithReturnMissing() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->get_symbol_from_represenation(':', true), ':');
     }
 
@@ -204,7 +227,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testPhonetifyStringCaseInsensitive() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->phonetify('nato'), 'November Alfa Tango Oscar');
     }
 
@@ -214,7 +237,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testUnphonetifyStringCaseInsensitive() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->unphonetify('November Alfa Tango Oscar'), 'NATO');
     }
 
@@ -226,7 +249,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testPhonetifyStringWithMissingSymbols() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->phonetify('nato:'), 'November Alfa Tango Oscar');
     }
 
@@ -238,7 +261,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testPhonetifyStringWithMissingSymbolsAndReturnMissing() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->phonetify('nato:', true), 'November Alfa Tango Oscar :');
     }
 
@@ -250,7 +273,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testUnphonetifyStringWithMissingSymbols() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->unphonetify('November Alfa Tango Oscar Colon'), 'NATO');
     }
 
@@ -260,7 +283,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testPhonetifyStringCaseSensitive() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->set_case_sensitivity(true);
         $alpha->add_symbol('a', 'alfa');
         $alpha->add_symbol('n', 'november');
@@ -275,7 +298,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testPhonetifyStringWithExtraneousWhitespace() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->phonetify("NA \tT\tO"), 'November Alfa Tango Oscar');
     }
 
@@ -285,7 +308,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testPhonetifyStringWithNewlines() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->phonetify("NA\nTO"), "November Alfa\nTango Oscar");
     }
 
@@ -295,7 +318,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testPhonetifyStringMultiword() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->add_symbol('N', 'New York');
         $this->assertEquals($alpha->phonetify('NATO'), 'New York Alfa Tango Oscar');
     }
@@ -306,7 +329,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testUnphonetifyStringCaseSensitive() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->set_case_sensitivity(true);
         $alpha->add_symbol('a', 'alfa');
         $alpha->add_symbol('n', 'november');
@@ -321,7 +344,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testUnphonetifyStringWithNewlines() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $this->assertEquals($alpha->unphonetify("November Alfa\nTango Oscar"), "NA\nTO");
     }
 
@@ -331,7 +354,7 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testUnphonetifyStringMultiword() {
-        $alpha = new Alphabet(json_decode(file_get_contents(__DIR__ . '/../../resources/test_alphabets/valid_nato.json')));
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->add_symbol('N', 'New York');
         $this->assertEquals($alpha->unphonetify('New York Alfa Tango Oscar'), 'NATO');
     }
