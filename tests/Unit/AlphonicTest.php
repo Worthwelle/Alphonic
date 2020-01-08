@@ -72,22 +72,7 @@ class AlphonicTest extends TestCase {
      * @return void
      */
     public function testValidateIncludedAlphabets() {
-        $constants = get_defined_constants(true);
-        $json_codes = array();
-        // HHVM loads constants defined by extensions under the "Core" key.
-        // https://github.com/facebook/hhvm/issues/7402
-        if (defined('HHVM_VERSION')) {
-            $json_codes = $constants['Core'];
-        } else {
-            $json_codes = $constants['json'];
-        }
-        foreach ($json_codes as $name => $value) {
-            if (!strncmp($name, 'JSON_ERROR_', 11)) {
-                $json_errors[$value] = $name;
-            }
-        }
-        unset($constants);
-
+        $json_errors = Alphabet::get_json_errors();
         $files = Alphonic::streamSafeGlob(__DIR__ . '/../../alphabets/', '*.json');
         foreach ($files as $file) {
             $json = @file_get_contents($file);

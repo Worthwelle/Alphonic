@@ -90,11 +90,11 @@ class Alphabet {
     public function __construct($json) {
         // Validates the JSON object and throws an exception if it is invalid.
         if ($json == null || !$this->validate_json($json)) {
-            throw new InvalidAlphabetException();
+            throw new InvalidAlphabetException('JSON is null or invalid.');
         }
 
-        $this->add_symbols($json->alphabets->en);
         $this->code = strtoupper($json->code);
+        $this->add_symbols($json->alphabets->en);
         if (isset($json->title)) {
             $this->title = is_array($json->title->en) ? $json->title->en[0] : $json->title->en;
         } else {
@@ -122,7 +122,8 @@ class Alphabet {
         // Validates the JSON decode and throws an exception if it is invalid.
         $decoded_json = json_decode($json);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidAlphabetException();
+            $json_errors = self::get_json_errors();
+            throw new InvalidAlphabetException('Could not decode JSON. Error: ' . $json_errors[json_last_error()]);
         }
 
         return new Alphabet($decoded_json);
@@ -141,8 +142,27 @@ class Alphabet {
         try {
             return Alphabet::from_json(file_get_contents($filename));
         } catch (InvalidAlphabetException $e) {
-            throw new InvalidAlphabetException($filename);
+            throw new InvalidAlphabetException($e->getMessage() . ' File: ' . $filename);
         }
+    }
+
+    public static function get_json_errors() {
+        $constants = get_defined_constants(true);
+        $json_codes = array();
+        // HHVM loads constants defined by extensions under the "Core" key.
+        // https://github.com/facebook/hhvm/issues/7402
+        if (defined('HHVM_VERSION')) {
+            $json_codes = $constants['Core'];
+        } else {
+            $json_codes = $constants['json'];
+        }
+        foreach ($json_codes as $name => $value) {
+            if (!strncmp($name, 'JSON_ERROR_', 11)) {
+                $json_errors[$value] = $name;
+            }
+        }
+
+        return $json_errors;
     }
 
     /**
@@ -202,14 +222,16 @@ class Alphabet {
         }
 
         $mismatched = false;
+        $mismatched_symbol = null;
         if (!$this->case_sensitive) {
             $unalphabet_i = array_change_key_case($this->unalphabet, CASE_UPPER);
             $representation_i = strtoupper($representation);
             $rep_set = isset($unalphabet_i[$representation_i]);
             $sym_set = isset($this->alphabet[$symbol]);
             if ($rep_set) {
+                $mismatched_symbol = $unalphabet_i[$representation_i];
                 if ($sym_set) {
-                    $mismatched = ($unalphabet_i[$representation_i] != $this->alphabet[$symbol]);
+                    $mismatched = ($unalphabet_i[$representation_i] != $symbol);
                 } else {
                     $mismatched = true;
                 }
@@ -218,8 +240,9 @@ class Alphabet {
             $rep_set = isset($this->unalphabet[$representation]);
             $sym_set = isset($this->alphabet[$symbol]);
             if ($rep_set) {
+                $mismatched_symbol = $this->unalphabet[$representation];
                 if ($sym_set) {
-                    $mismatched = ($this->unalphabet[$representation] != $this->alphabet[$symbol]);
+                    $mismatched = ($this->unalphabet[$representation] != $symbol);
                 } else {
                     $mismatched = true;
                 }
@@ -227,7 +250,7 @@ class Alphabet {
         }
 
         if ($mismatched) {
-            throw new InvalidAlphabetException();
+            throw new InvalidAlphabetException('Mismatched symbols in ' . $this->code . ': ' . $symbol . ' = ' . $mismatched_symbol);
         }
 
         $representation = $this->clean_whitespace($representation);

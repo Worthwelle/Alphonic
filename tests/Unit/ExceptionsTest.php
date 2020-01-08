@@ -20,9 +20,9 @@ class ExceptionsTest extends TestCase {
      * @return void
      */
     public function testAlphabetNotFoundException() {
-        $exception = new AlphabetNotFoundException();
+        $exception = new AlphabetNotFoundException('Code');
         $this->assertInstanceOf("Worthwelle\Alphonic\Exception\AlphabetNotFoundException", $exception);
-        $this->assertSame('Alphabet not found', $exception->getMessage());
+        $this->assertSame('Code', $exception->getMessage());
     }
 
     /**
@@ -31,8 +31,8 @@ class ExceptionsTest extends TestCase {
      * @return void
      */
     public function testInvalidAlphabetException() {
-        $exception = new InvalidAlphabetException();
+        $exception = new InvalidAlphabetException('Mismatched symbols');
         $this->assertInstanceOf("Worthwelle\Alphonic\Exception\InvalidAlphabetException", $exception);
-        $this->assertSame('Invalid alphabet', $exception->getMessage());
+        $this->assertSame('Mismatched symbols', $exception->getMessage());
     }
 }

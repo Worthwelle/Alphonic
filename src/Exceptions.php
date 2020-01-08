@@ -14,10 +14,7 @@ namespace Worthwelle\Alphonic\Exception;
  */
 class AlphabetNotFoundException extends \Exception {
     public function __construct($message = '') {
-        if ($message != '') {
-            $message = ": $message";
-        }
-        parent::__construct('Alphabet not found' . $message);
+        parent::__construct($message);
     }
 }
 
@@ -26,9 +23,6 @@ class AlphabetNotFoundException extends \Exception {
  */
 class InvalidAlphabetException extends \Exception {
     public function __construct($message = '') {
-        if ($message != '') {
-            $message = ": $message";
-        }
-        parent::__construct('Invalid alphabet' . $message);
+        parent::__construct($message);
     }
 }

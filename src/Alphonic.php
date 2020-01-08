@@ -45,7 +45,7 @@ class Alphonic {
                     $this->add_alphabet_from_file($file);
                 } catch (InvalidAlphabetException $e) {
                     if (!$skip_invalid) {
-                        throw new InvalidAlphabetException($file);
+                        throw new InvalidAlphabetException($e->getMessage() . ' File: ' . $file);
                     }
                 }
             }
