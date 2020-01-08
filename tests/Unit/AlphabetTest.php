@@ -21,12 +21,13 @@ class AlphabetTest extends TestCase {
     private $root;
 
     /**
-     * Set up test environmemt
+     * Set up test environment
      */
     public function setUp() {
         $structure = array(
             'alphabets' => array(
-                'nato.json'    => '{"code": "NATO","title": {"en": "NATO Phonetic Alphabet"},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}}}',
+                'nato.json'          => '{"code": "NATO","title": {"en": "NATO Phonetic Alphabet"},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}}}',
+                'unicode_alpha.json' => '{"code": "BRAILLE-FR","title": {"en": "French Braille"},"alphabets": {"en": {"I": "⠊","J": "⠚"}}}',
             ),
             'invalid' => array(
                 'invalid_nato.json' => '{"code": 123,"title": {"en": "NATO Phonetic Alphabet"},"alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie"}}}',
@@ -92,6 +93,16 @@ class AlphabetTest extends TestCase {
     public function testLoadInvalidJson() {
         $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
         $alpha = Alphabet::from_file($this->root->url() . '/invalid/invalid_json.json');
+    }
+
+    /**
+     * Load a Unicode alphabet and verify there are no conflicts when forcing
+     * Unicode characters to uppercase.
+     *
+     * @return void
+     */
+    public function testLoadUnicodeAlphabet() {
+        $alpha = Alphabet::from_file($this->root->url() . '/alphabets/unicode_alpha.json');
     }
 
     /**

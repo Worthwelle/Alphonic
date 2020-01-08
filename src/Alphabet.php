@@ -93,7 +93,7 @@ class Alphabet {
             throw new InvalidAlphabetException('JSON is null or invalid.');
         }
 
-        $this->code = strtoupper($json->code);
+        $this->code = mb_strtoupper($json->code);
         $this->add_symbols($json->alphabets->en);
         if (isset($json->title)) {
             $this->title = is_array($json->title->en) ? $json->title->en[0] : $json->title->en;
@@ -215,7 +215,7 @@ class Alphabet {
     public function add_symbol($symbol, $representation, $overwrite = true) {
         // if the alphabet is not case-sensitive, force the symbol to uppercase to choose a standard case
         if (!$this->case_sensitive) {
-            $symbol = strtoupper($symbol);
+            $symbol = mb_strtoupper($symbol);
         }
         if (!$overwrite && isset($this->alphabet[$symbol])) {
             return false;
@@ -225,7 +225,7 @@ class Alphabet {
         $mismatched_symbol = null;
         if (!$this->case_sensitive) {
             $unalphabet_i = array_change_key_case($this->unalphabet, CASE_UPPER);
-            $representation_i = strtoupper($representation);
+            $representation_i = mb_strtoupper($representation);
             $rep_set = isset($unalphabet_i[$representation_i]);
             $sym_set = isset($this->alphabet[$symbol]);
             if ($rep_set) {
@@ -279,7 +279,7 @@ class Alphabet {
     public function get_symbol_represenation($symbol, $return_missing = false) {
         // if the alphabet is not case-sensitive, force the symbol to uppercase to choose a standard case
         if (!$this->case_sensitive) {
-            $symbol = strtoupper($symbol);
+            $symbol = mb_strtoupper($symbol);
         }
         if (!isset($this->alphabet[$symbol])) {
             if ($return_missing) {
@@ -305,7 +305,7 @@ class Alphabet {
         // if the alphabet is not case-sensitive, force the symbol and unalphabet to uppercase to choose a standard case
         if (!$this->case_sensitive) {
             $search_array = $this->get_caseinsensitive_unalphabet();
-            $representation = strtoupper($representation);
+            $representation = mb_strtoupper($representation);
         }
 
         if (!isset($search_array[$representation])) {
@@ -339,7 +339,7 @@ class Alphabet {
         if ($this->dirty) {
             $this->unalphabet_i = array();
             foreach ($this->unalphabet as $key => $val) {
-                $this->unalphabet_i[strtoupper($key)] = strtoupper($val);
+                $this->unalphabet_i[mb_strtoupper($key)] = mb_strtoupper($val);
             }
         }
 
