@@ -100,21 +100,26 @@ class Alphabet {
         }
 
         $this->code = mb_strtoupper($json->code);
-        $alphabets = $this->localize($json->alphabets);
+        $default_locale = isset($json->default_locale) ? $json->default_locale : '*';
+        $alphabets = $this->localize_object($json->alphabets, $default_locale);
         foreach ($alphabets as $locale => $alphabet) {
             if (!isset($this->default_locale)) {
                 $this->default_locale = $locale;
             }
             $this->add_symbols($alphabet, $locale);
         }
+        if (isset($json->default_locale) && $this->has_locale($json->default_locale)) {
+            $this->default_locale = $json->default_locale;
+        } elseif ($this->has_locale('*')) {
+            $this->default_locale = '*';
+        }
         if (isset($json->title)) {
-            $title = $this->localize($json->title);
-            $this->title = is_array($json->title->en) ? $json->title->en[0] : $json->title->en;
+            $this->title = $this->localize_nonobject($json->title, $this->default_locale);
         } else {
             $this->title = $this->code;
         }
         if (isset($json->description)) {
-            $this->description = $json->description;
+            $this->description = $this->localize_nonobject($json->description);
         }
         if (isset($json->source)) {
             $this->source = $json->source;
@@ -179,6 +184,17 @@ class Alphabet {
     }
 
     /**
+     * Checks if a locale exists in the alphabet.
+     *
+     * @param string $locale the reference code for the desired locale
+     *
+     * @return bool the existence of the given locale
+     */
+    public function has_locale($locale) {
+        return isset($this->alphabet[$locale]);
+    }
+
+    /**
      * Check an object for locales. If it doesn't have one, normalize to a default locale value.
      *
      * @param object $value          the object to normalize
@@ -186,9 +202,27 @@ class Alphabet {
      *
      * @return bool the validation result of the object
      */
-    public function localize($value, $default_locale = 'en') {
+    public function localize_object($value, $default_locale = 'en') {
         $array_values = array_values(get_object_vars($value));
-        if (is_string($array_values[0])) {
+        if (!is_object($array_values[0])) {
+            return (object) array(
+                $default_locale => $value
+            );
+        }
+
+        return $value;
+    }
+
+    /**
+     * Check a non-object for locales. If it doesn't have one, normalize to a default locale value.
+     *
+     * @param object $value          the object to normalize
+     * @param string $default_locale the locale to normalize to if none are found
+     *
+     * @return bool the validation result of the object
+     */
+    public function localize_nonobject($value, $default_locale = 'en') {
+        if (!is_object($value)) {
             return (object) array(
                 $default_locale => $value
             );
@@ -247,16 +281,17 @@ class Alphabet {
      * @return bool whether or not the symbol was successfully added
      */
     public function add_symbol($symbol, $representation, $locale = '', $overwrite = true) {
-        if ($locale = '') {
-            $locale = $this->default_locale;
+        if ($locale == '') {
+            if (isset($this->default_locale)) {
+                $locale = $this->default_locale;
+            }
         }
         if (is_array($locale)) {
             $return = false;
             $ran = false;
             foreach ($locale as $loc) {
-                $was = $return;
-                $return = add_symbol($symbol, $representation, $loc, $overwrite);
-                if ($return) {
+                $return = $this->add_symbol($symbol, $representation, $loc, $overwrite);
+                if (!$return) {
                     if ($ran) {
                         throw new InvalidAlphabetException('Inconsistent state in ' . $this->code . ': ' . $symbol . ' added to locales ' . implode(',', $locale) . ' failed in ' . $loc . ' after succeeding in previous locales.');
                     }
@@ -272,17 +307,20 @@ class Alphabet {
         if (!$this->case_sensitive) {
             $symbol = mb_strtoupper($symbol);
         }
-        if (!$overwrite && isset($this->alphabet[$symbol])) {
+        if (!$overwrite && isset($this->alphabet[$locale][$symbol])) {
             return false;
         }
 
         $mismatched = false;
         $mismatched_symbol = null;
+        if (!isset($this->unalphabet[$locale])) {
+            $this->unalphabet[$locale] = array();
+        }
         if (!$this->case_sensitive) {
-            $unalphabet_i = array_change_key_case($this->unalphabet, CASE_UPPER);
+            $unalphabet_i = array_change_key_case($this->unalphabet[$locale], CASE_UPPER);
             $representation_i = mb_strtoupper($representation);
             $rep_set = isset($unalphabet_i[$representation_i]);
-            $sym_set = isset($this->alphabet[$symbol]);
+            $sym_set = isset($this->alphabet[$locale][$symbol]);
             if ($rep_set) {
                 $mismatched_symbol = $unalphabet_i[$representation_i];
                 if ($sym_set) {
@@ -292,12 +330,12 @@ class Alphabet {
                 }
             }
         } else {
-            $rep_set = isset($this->unalphabet[$representation]);
-            $sym_set = isset($this->alphabet[$symbol]);
+            $rep_set = isset($this->unalphabet[$locale][$representation]);
+            $sym_set = isset($this->alphabet[$locale][$symbol]);
             if ($rep_set) {
-                $mismatched_symbol = $this->unalphabet[$representation];
+                $mismatched_symbol = $this->unalphabet[$locale][$representation];
                 if ($sym_set) {
-                    $mismatched = ($this->unalphabet[$representation] != $symbol);
+                    $mismatched = ($this->unalphabet[$locale][$representation] != $symbol);
                 } else {
                     $mismatched = true;
                 }
@@ -310,17 +348,17 @@ class Alphabet {
 
         $representation = $this->clean_whitespace($representation);
         $count = count(explode(' ', $representation));
-        $this->alphabet[$symbol] = $representation;
+        $this->alphabet[$locale][$symbol] = $representation;
         if ($count > 1) {
             $clean_representation = $this->clean_representation($representation);
-            $this->multiword[$count][] = $representation;
-            $this->unalphabet[$clean_representation] = $symbol;
+            $this->multiword[$locale][$count][] = $representation;
+            $this->unalphabet[$locale][$clean_representation] = $symbol;
         } else {
-            $this->unalphabet[$representation] = $symbol;
+            $this->unalphabet[$locale][$representation] = $symbol;
         }
         $this->dirty = true;
 
-        return isset($this->alphabet[$symbol]);
+        return isset($this->alphabet[$locale][$symbol]);
     }
 
     /**
@@ -333,14 +371,14 @@ class Alphabet {
      * @return string|null the representation of the requested symbol or null if non-existent and $return_missing is false
      */
     public function get_symbol_represenation($symbol, $locale = '', $return_missing = false) {
-        if ($locale = '') {
+        if ($locale == '') {
             $locale = $this->default_locale;
         }
         // if the alphabet is not case-sensitive, force the symbol to uppercase to choose a standard case
         if (!$this->case_sensitive) {
             $symbol = mb_strtoupper($symbol);
         }
-        if (!isset($this->alphabet[$symbol])) {
+        if (!isset($this->alphabet[$locale][$symbol])) {
             if ($return_missing) {
                 return $symbol;
             }
@@ -348,7 +386,7 @@ class Alphabet {
             return null;
         }
 
-        return $this->alphabet[$symbol];
+        return $this->alphabet[$locale][$symbol];
     }
 
     /**
@@ -361,13 +399,14 @@ class Alphabet {
      * @return string|null the representation of the requested symbol or null if non-existent and $return_missing is false
      */
     public function get_symbol_from_represenation($representation, $locale = '', $return_missing = false) {
-        if ($locale = '') {
+        if ($locale == '') {
             $locale = $this->default_locale;
         }
-        $search_array = $this->unalphabet;
+        $search_array = $this->unalphabet[$locale];
         // if the alphabet is not case-sensitive, force the symbol and unalphabet to uppercase to choose a standard case
         if (!$this->case_sensitive) {
-            $search_array = $this->get_caseinsensitive_unalphabet();
+            $unalpha = $this->get_caseinsensitive_unalphabet();
+            $search_array = $unalpha[$locale];
             $representation = mb_strtoupper($representation);
         }
 
@@ -401,8 +440,10 @@ class Alphabet {
     public function get_caseinsensitive_unalphabet() {
         if ($this->dirty) {
             $this->unalphabet_i = array();
-            foreach ($this->unalphabet as $key => $val) {
-                $this->unalphabet_i[mb_strtoupper($key)] = mb_strtoupper($val);
+            foreach ($this->unalphabet as $locale => $alpha) {
+                foreach ($alpha as $key => $val) {
+                    $this->unalphabet_i[$locale][mb_strtoupper($key)] = mb_strtoupper($val);
+                }
             }
         }
 
@@ -414,14 +455,13 @@ class Alphabet {
      *
      * @return string|array the title or titles of the alphabet
      */
-    public function get_title() {
-        if (is_array($this->title)) {
-            foreach ($this->title as $title) {
-                return $title;
-            }
+    public function get_title($locale = '') {
+        if ($locale == '') {
+            $locale = $this->default_locale;
         }
+        $titles = get_object_vars($this->title);
 
-        return $this->title;
+        return $titles[$locale];
     }
 
     /**
@@ -438,8 +478,13 @@ class Alphabet {
      *
      * @return string the description of the alphabet
      */
-    public function get_description() {
-        return $this->description;
+    public function get_description($locale = '') {
+        if ($locale == '') {
+            $locale = $this->default_locale;
+        }
+        $descriptions = get_object_vars($this->description);
+
+        return $descriptions[$locale];
     }
 
     /**

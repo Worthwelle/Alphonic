@@ -29,6 +29,9 @@ class AlphonicTest extends TestCase {
             'alphabets' => array(
                 'nato.json'    => '{"code": "NATO","title": {"en": "NATO Phonetic Alphabet"},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}}}',
             ),
+            'alphabets_alt' => array(
+                'nato2.json'    => '{"code": "NATO2","title": {"en": "NATO Phonetic Alphabet"},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}}}',
+            ),
             'invalid' => array(
                 'invalid_nato.json' => '{"code": 123,"title": {"en": "NATO Phonetic Alphabet"},"alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie"}}}',
                 'invalid_json.json' => '{"code": "NATO2","title": {"en": "NATO Phonetic Alphabet"},"alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie"',
@@ -54,7 +57,7 @@ class AlphonicTest extends TestCase {
             ->will($this->returnValue(true));
 
         $alpha->expects($this->any())
-            ->method('localize')
+            ->method('localize_object')
             ->will($this->returnValue((object) array(
                 'en' => array(
                     'A' => 'Alfa',
@@ -93,6 +96,14 @@ class AlphonicTest extends TestCase {
                     '8' => 'Eight',
                     '9' => 'Niner',
                     '0' => 'Zero'
+                )
+            )));
+
+        $alpha->expects($this->any())
+            ->method('localize_nonobject')
+            ->will($this->returnValue(array(
+                'en' => array(
+                    'NATO Phonetic Alphabet'
                 )
             )));
 
@@ -151,7 +162,7 @@ class AlphonicTest extends TestCase {
     public function testLoadAlphabets() {
         $alphonic = new Alphonic();
         $alphonic->load_alphabets();
-        $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
+        $this->assertContains('NATO Phonetic Alphabet', $alphonic->get_title('nato'));
     }
 
     /**
@@ -163,6 +174,16 @@ class AlphonicTest extends TestCase {
         $this->expectException('\InvalidArgumentException');
         $alphonic = new Alphonic();
         $alphonic->load_alphabets(123);
+    }
+
+    /**
+     * Load a set of alphabets including invalid alphabets and verify an exception is thrown.
+     *
+     * @return void
+     */
+    public function testLoadAlphabetsFromDirectory() {
+        $alphonic = new Alphonic();
+        $alphonic->load_alphabets($this->root->url() . '/alphabets');
     }
 
     /**

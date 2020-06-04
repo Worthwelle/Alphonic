@@ -27,8 +27,9 @@ class AlphabetTest extends TestCase {
         $structure = array(
             'alphabets' => array(
                 'nato.json'          => '{"code": "NATO","title": {"en": "NATO Phonetic Alphabet"},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}}}',
-                'unicode_alpha.json' => '{"code": "BRAILLE-FR","title": {"en": "French Braille"},"alphabets": {"en": {"I": "⠊","J": "⠚"}}}',
+                'unicode_alpha.json' => '{"code": "BRAILLE-FR","alphabets": {"en": {"I": "⠊","J": "⠚"}}}',
                 'no_locale_alpha.json'    => '{"code": "NATONOLOCALE","title": {"en": "NATO Phonetic Alphabet"},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}}',
+                'two_locale_alpha.json'    => '{"code": "NATOTWO","title": {"en": ["NATO Phonetic Alphabet","Another Title"]},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}, "*": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero", ":": "Colon"}}}',
             ),
             'invalid' => array(
                 'invalid_nato.json' => '{"code": 123,"title": {"en": "NATO Phonetic Alphabet"},"alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie"}}}',
@@ -118,6 +119,16 @@ class AlphabetTest extends TestCase {
     }
 
     /**
+     * Load an alphabet with multiple locales and verify it is possible to convert with the default locale.
+     *
+     * @return void
+     */
+    public function testLoadMultipleLocaleAlphabet() {
+        $alpha = Alphabet::from_file($this->root->url() . '/alphabets/two_locale_alpha.json');
+        $this->assertEquals($alpha->phonetify('nato'), 'November Alfa Tango Oscar');
+    }
+
+    /**
      * Add a symbol to the alphabet and verify it is used in converting.
      *
      * @return void
@@ -135,7 +146,7 @@ class AlphabetTest extends TestCase {
      */
     public function testAddSymbolWithoutOverwrite() {
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
-        $alpha->add_symbol('A', 'Adam', 'en', false);
+        $alpha->add_symbol('A', 'Adam', '', false);
         $this->assertEquals($alpha->phonetify('nato'), 'November Alfa Tango Oscar');
     }
 
@@ -147,7 +158,8 @@ class AlphabetTest extends TestCase {
     public function testAddSymbolWithRepresentationConflict() {
         $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
-        $alpha->add_symbol(')', 'Alfa');
+        $alpha->add_symbol(')', 'Alfa', '');
+        print_r($alpha);
     }
 
     /**
@@ -168,30 +180,61 @@ class AlphabetTest extends TestCase {
      */
     public function testAddSymbolsWithoutOverwrite() {
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
-        $alpha->add_symbols(array('A' => 'Adam', ':' => 'Colon', ';' => 'Semicolon'), 'en', false);
+        $alpha->add_symbols(array('A' => 'Adam', ':' => 'Colon', ';' => 'Semicolon'), '', false);
         $this->assertEquals($alpha->phonetify('nato:;'), 'November Alfa Tango Oscar Colon Semicolon');
     }
 
     /**
-     * Add multiple symbols to the alphabet and verify they are used in converting.
+     * Add a symbol to one locale but not another and ensure that it is used in converting only in that one locale.
+     *
+     * @depends testLoadMultipleLocaleAlphabet
+     *
+     * @return void
+     */
+    public function testAddSymbolToOneOfTwoLocales() {
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/two_locale_alpha.json')));
+        $alpha->add_symbol(':', 'Colon', '*', false);
+        $this->assertEquals($alpha->phonetify('nato:', '*'), 'November Alfa Tango Oscar Colon');
+        $this->assertEquals($alpha->phonetify('nato:', 'en'), 'November Alfa Tango Oscar');
+    }
+
+    /**
+     * Add a symbol to multiple locales in the same alphabet and verify it is used in converting with both locales.
+     *
+     * @depends testLoadMultipleLocaleAlphabet
      *
      * @return void
      */
     public function testAddSymbolToMultipleLocales() {
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/two_locale_alpha.json')));
+        $alpha->add_symbol(':', 'Colon', array('*', 'en'));
+        $this->assertEquals($alpha->phonetify('nato:', '*'), 'November Alfa Tango Oscar Colon');
+        $this->assertEquals($alpha->phonetify('nato:', 'en'), 'November Alfa Tango Oscar Colon');
     }
 
     /**
-     * Add multiple symbols to the alphabet and verify they are used in converting.
+     * Add a symbol to multiple locales in the same alphabet in a way that causes the second locale to fail and verify that an exception is thrown.
+     *
+     * @depends testLoadMultipleLocaleAlphabet
      *
      * @return void
      */
-    public function testAddSymbolToMultipleLocalesWithConflict() {
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+    public function testAddSymbolToMultipleLocalesInconsistently() {
+        $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/two_locale_alpha.json')));
+        $alpha->add_symbol(';', 'Colon', array('en', '*'));
+    }
+
+    /**
+     * Test to ensure that the wildcard locale takes priority.
+     *
+     * @depends testLoadMultipleLocaleAlphabet
+     *
+     * @return void
+     */
+    public function testSetDefaultLocale() {
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/two_locale_alpha.json')));
+        $this->assertEquals($alpha->phonetify(':'), 'Colon');
     }
 
     /**
@@ -227,7 +270,7 @@ class AlphabetTest extends TestCase {
      */
     public function testGetMissingSymbolRepresentationReturnMissing() {
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
-        $this->assertEquals($alpha->get_symbol_represenation(':', 'en', true), ':');
+        $this->assertEquals($alpha->get_symbol_represenation(':', '', true), ':');
     }
 
     /**
@@ -239,7 +282,7 @@ class AlphabetTest extends TestCase {
      */
     public function testGetSymbolFromRepresentation() {
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
-        $this->assertEquals($alpha->get_symbol_from_represenation('Alfa', true), 'A');
+        $this->assertEquals($alpha->get_symbol_from_represenation('Alfa', '', true), 'A');
     }
 
     /**
@@ -263,7 +306,7 @@ class AlphabetTest extends TestCase {
      */
     public function testGetMissingSymbolFromRepresentationWithReturnMissing() {
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
-        $this->assertEquals($alpha->get_symbol_from_represenation(':', '*', true), ':');
+        $this->assertEquals($alpha->get_symbol_from_represenation(':', '', true), ':');
     }
 
     /**

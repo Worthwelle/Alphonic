@@ -115,8 +115,8 @@ class Alphonic {
      *
      * @return string the title of the alphabet
      */
-    public function get_title($alpha) {
-        return $this->alphabet($alpha)->get_title();
+    public function get_title($alpha, $locale = '') {
+        return $this->alphabet($alpha)->get_title($locale);
     }
 
     /**
@@ -126,8 +126,8 @@ class Alphonic {
      *
      * @return string the description of the alphabet
      */
-    public function get_description($alpha) {
-        return $this->alphabet($alpha)->get_description();
+    public function get_description($alpha, $locale = '') {
+        return $this->alphabet($alpha)->get_description($locale);
     }
 
     /**
