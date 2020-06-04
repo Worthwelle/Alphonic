@@ -174,8 +174,8 @@
             "0": "Zero",
             ",": "進點",
             "/": "分數针劃",
-            "BREAK": "TODO",
-            ".": "TODO"
+            "BREAK": "TODO_BREAK",
+            ".": "TODO_POINT"
         }
     }
 }

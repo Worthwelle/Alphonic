@@ -155,12 +155,13 @@ class Alphonic {
      *
      * @param string $string         the string to encode
      * @param string $alpha          the reference code for the desired alphabet
+     * @param string $locale         the reference code for the desired locale
      * @param bool   $return_missing whether or not to return the original symbol if there is no matching representation listed in the alphabet
      *
      * @return string the phonetic representation of the given string
      */
-    public function phonetify($string, $alpha, $return_missing = false) {
-        return $this->alphabet($alpha)->phonetify($string, $return_missing);
+    public function phonetify($string, $alpha, $locale = '*', $return_missing = false) {
+        return $this->alphabet($alpha)->phonetify($string, $locale, $return_missing);
     }
 
     /**
@@ -168,12 +169,13 @@ class Alphonic {
      *
      * @param string $string         the string to dencode
      * @param string $alpha          the reference code for the desired alphabet
+     * @param string $locale         the reference code for the desired locale
      * @param bool   $return_missing whether or not to return the original symbol if there is no matching representation listed in the alphabet
      *
      * @return string the string of the given phonetic representation
      */
-    public function unphonetify($string, $alpha, $return_missing = false) {
-        return $this->alphabet($alpha)->unphonetify($string, $return_missing);
+    public function unphonetify($string, $alpha, $locale = '*', $return_missing = false) {
+        return $this->alphabet($alpha)->unphonetify($string, $locale, $return_missing);
     }
 
     /**

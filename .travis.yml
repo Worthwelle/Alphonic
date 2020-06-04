@@ -37,7 +37,7 @@ before_install:
   - if [[ "$TRAVIS_PHP_VERSION" = "hhvm-3.18" || "$TRAVIS_PHP_VERSION" = "nightly" ]]; then sed -i '/^.*friendsofphp\/php-cs-fixer.*$/d' composer.json; fi
 
 install:
-  - travis_retry composer install --no-interaction --prefer-dist
+  - COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --no-interaction --prefer-dist
 
 script:
   - if [[ "$WITH_COVERAGE" == "true" ]]; then composer coverage; else if [[ "$TRAVIS_PHP_VERSION" == "5.3" || "$TRAVIS_PHP_VERSION" == "5.4" || "$TRAVIS_PHP_VERSION" == "5.5" ]]; then phpunit --verbose; else composer test; fi; fi

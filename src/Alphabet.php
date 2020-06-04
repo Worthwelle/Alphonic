@@ -54,6 +54,12 @@ class Alphabet {
      */
     protected $alphabet;
     /**
+     * Sets the default locale for the alphabet. Currently this choses the first locale listed in the alphabet file.
+     *
+     * @var int
+     */
+    protected $default_locale;
+    /**
      * Contains a list of representations of more than one word, grouped by number of words.
      *
      * @var array
@@ -94,8 +100,15 @@ class Alphabet {
         }
 
         $this->code = mb_strtoupper($json->code);
-        $this->add_symbols($json->alphabets->en);
+        $alphabets = $this->localize($json->alphabets);
+        foreach ($alphabets as $locale => $alphabet) {
+            if (!isset($this->default_locale)) {
+                $this->default_locale = $locale;
+            }
+            $this->add_symbols($alphabet, $locale);
+        }
         if (isset($json->title)) {
+            $title = $this->localize($json->title);
             $this->title = is_array($json->title->en) ? $json->title->en[0] : $json->title->en;
         } else {
             $this->title = $this->code;
@@ -166,6 +179,25 @@ class Alphabet {
     }
 
     /**
+     * Check an object for locales. If it doesn't have one, normalize to a default locale value.
+     *
+     * @param object $value          the object to normalize
+     * @param string $default_locale the locale to normalize to if none are found
+     *
+     * @return bool the validation result of the object
+     */
+    public function localize($value, $default_locale = 'en') {
+        $array_values = array_values(get_object_vars($value));
+        if (is_string($array_values[0])) {
+            return (object) array(
+                $default_locale => $value
+            );
+        }
+
+        return $value;
+    }
+
+    /**
      * Validates a PHP object representing a JSON object to ensure it follows the defined schema.
      *
      * @param object $json a PHP object representation of a JSON object used to build the alphabet
@@ -194,25 +226,48 @@ class Alphabet {
     /**
      * Adds an array of symbols to the alphabet.
      *
-     * @param array $alphabet  an array of symbol and representation pairs to add to the alphabet
-     * @param bool  $overwrite whether or not to overwrite existing symbols
+     * @param array  $alphabet  an array of symbol and representation pairs to add to the alphabet
+     * @param string $locale    the reference code for the desired locale
+     * @param bool   $overwrite whether or not to overwrite existing symbols
      */
-    public function add_symbols($alphabet, $overwrite = true) {
+    public function add_symbols($alphabet, $locale = '', $overwrite = true) {
         foreach ($alphabet as $key => $value) {
-            $this->add_symbol($key, $value, $overwrite);
+            $this->add_symbol($key, $value, $locale, $overwrite);
         }
     }
 
     /**
      * Adds a single symbol to the alphabet.
      *
-     * @param string $symbol         the symbol to add to the alphabet
-     * @param string $representation the phonetic representation of the symbol provided
-     * @param bool   $overwrite      whether or not to overwrite an existing symbol
+     * @param string       $symbol         the symbol to add to the alphabet
+     * @param string       $representation the phonetic representation of the symbol provided
+     * @param string|array $locale         the reference code for the desired locale
+     * @param bool         $overwrite      whether or not to overwrite an existing symbol
      *
      * @return bool whether or not the symbol was successfully added
      */
-    public function add_symbol($symbol, $representation, $overwrite = true) {
+    public function add_symbol($symbol, $representation, $locale = '', $overwrite = true) {
+        if ($locale = '') {
+            $locale = $this->default_locale;
+        }
+        if (is_array($locale)) {
+            $return = false;
+            $ran = false;
+            foreach ($locale as $loc) {
+                $was = $return;
+                $return = add_symbol($symbol, $representation, $loc, $overwrite);
+                if ($return) {
+                    if ($ran) {
+                        throw new InvalidAlphabetException('Inconsistent state in ' . $this->code . ': ' . $symbol . ' added to locales ' . implode(',', $locale) . ' failed in ' . $loc . ' after succeeding in previous locales.');
+                    }
+
+                    return $return; // if it fails for one, it probably fails for more. Either way we may end up in an inconsistent state.
+                }
+                $ran = true;
+            }
+
+            return $return;
+        }
         // if the alphabet is not case-sensitive, force the symbol to uppercase to choose a standard case
         if (!$this->case_sensitive) {
             $symbol = mb_strtoupper($symbol);
@@ -272,11 +327,15 @@ class Alphabet {
      * Gets the phonetic representation of a given symbol.
      *
      * @param string $symbol         the symbol to retrieve from the alphabet
+     * @param string $locale         the reference code for the desired locale
      * @param bool   $return_missing whether or not to return the original symbol if there is no matching representation listed in the alphabet
      *
      * @return string|null the representation of the requested symbol or null if non-existent and $return_missing is false
      */
-    public function get_symbol_represenation($symbol, $return_missing = false) {
+    public function get_symbol_represenation($symbol, $locale = '', $return_missing = false) {
+        if ($locale = '') {
+            $locale = $this->default_locale;
+        }
         // if the alphabet is not case-sensitive, force the symbol to uppercase to choose a standard case
         if (!$this->case_sensitive) {
             $symbol = mb_strtoupper($symbol);
@@ -296,11 +355,15 @@ class Alphabet {
      * Gets the symbol matching a given phonetic representation.
      *
      * @param string $representation the representation to retrieve from the alphabet
+     * @param string $locale         the reference code for the desired locale
      * @param bool   $return_missing whether or not to return the original representation if there is no matching symbol listed in the alphabet
      *
      * @return string|null the representation of the requested symbol or null if non-existent and $return_missing is false
      */
-    public function get_symbol_from_represenation($representation, $return_missing = false) {
+    public function get_symbol_from_represenation($representation, $locale = '', $return_missing = false) {
+        if ($locale = '') {
+            $locale = $this->default_locale;
+        }
         $search_array = $this->unalphabet;
         // if the alphabet is not case-sensitive, force the symbol and unalphabet to uppercase to choose a standard case
         if (!$this->case_sensitive) {
@@ -392,24 +455,25 @@ class Alphabet {
      * Encode (phonetify) a string into its phonetic representation.
      *
      * @param string $string         the string to encode
+     * @param string $locale         the reference code for the desired locale
      * @param bool   $return_missing whether or not to return the original symbol if there is no matching representation listed in the alphabet
      *
      * @return string the phonetic representation of the given string
      */
-    public function phonetify($string, $return_missing = false) {
+    public function phonetify($string, $locale = '', $return_missing = false) {
         $string = $this->clean_whitespace($string);
         $lines = explode("\n", $string);
         $phonetic = array();
         if (count($lines) > 1) {
             $results = array();
             foreach ($lines as $line) {
-                $results[] = $this->phonetify($line, $return_missing);
+                $results[] = $this->phonetify($line, $locale, $return_missing);
             }
 
             return implode("\n", $results);
         }
         foreach (str_split($string) as $char) {
-            $symbol = $this->get_symbol_represenation($char, $return_missing);
+            $symbol = $this->get_symbol_represenation($char, $locale, $return_missing);
             if ($symbol != null) {
                 $phonetic[] = $symbol;
             }
@@ -422,24 +486,25 @@ class Alphabet {
      * Decode (unphonetify) a string from its phonetic representation.
      *
      * @param string $string         the string to decode
+     * @param string $locale         the reference code for the desired locale
      * @param bool   $return_missing whether or not to return the original representation if there is no matching symbol listed in the alphabet
      *
      * @return string the string of the given phonetic representation
      */
-    public function unphonetify($string, $return_missing = false) {
+    public function unphonetify($string, $locale = '', $return_missing = false) {
         $string = $this->clean_whitespace($string);
         $string = $this->replace_multiword($string);
         $lines = explode("\n", $string);
         $phonetic = array();
         if (count($lines) > 1) {
             foreach ($lines as $line) {
-                $phonetic[] = $this->unphonetify($line, $return_missing);
+                $phonetic[] = $this->unphonetify($line, $locale, $return_missing);
             }
 
             return implode("\n", $phonetic);
         }
         foreach (explode(' ', $string) as $rep) {
-            $symbol = $this->get_symbol_from_represenation($rep, $return_missing);
+            $symbol = $this->get_symbol_from_represenation($rep, $locale, $return_missing);
             if ($symbol != null) {
                 $phonetic[] = $symbol;
             }
