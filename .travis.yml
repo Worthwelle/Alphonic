@@ -1,4 +1,3 @@
-sudo: false
 language: php
 
 cache:
@@ -6,7 +5,7 @@ cache:
     - $HOME/.composer/cache
     - $HOME/.phpcsfixer
 
-matrix:
+jobs:
   fast_finish: true
   include:
     - php: 5.3
@@ -42,3 +41,12 @@ install:
 script:
   - if [[ "$WITH_COVERAGE" == "true" ]]; then composer coverage; else if [[ "$TRAVIS_PHP_VERSION" == "5.3" || "$TRAVIS_PHP_VERSION" == "5.4" || "$TRAVIS_PHP_VERSION" == "5.5" ]]; then phpunit --verbose; else composer test; fi; fi
   - if [[ "$WITH_PHPCSFIXER" == "true" ]]; then mkdir -p $HOME/.phpcsfixer && vendor/bin/php-cs-fixer fix --cache-file "$HOME/.phpcsfixer/.php_cs.cache" --dry-run --diff --verbose; fi
+
+notifications:
+  irc:
+    channels:
+      - "irc.freenode.org#Worthwelle"
+    template: 
+      - "%{repository_slug}#%{build_number} %{result} (%{branch} - %{commit} - %{elapsed_time}): %{commit_subject}   %{build_url}"
+    on_success: always
+    on_failure: always
