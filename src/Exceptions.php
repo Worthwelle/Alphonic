@@ -28,6 +28,15 @@ class InvalidAlphabetException extends \Exception {
 }
 
 /**
+ * Exception that is raised when a locale requested isn't found in the alphabet.
+ */
+class LocaleNotFoundException extends \Exception {
+    public function __construct($message = '') {
+        parent::__construct($message);
+    }
+}
+
+/**
  * Exception that is raised when a locale provided isn't in a proper format.
  */
 class InvalidLocaleException extends \Exception {

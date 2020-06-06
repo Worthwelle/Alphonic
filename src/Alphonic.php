@@ -11,6 +11,8 @@ namespace Worthwelle\Alphonic;
 
 use Worthwelle\Alphonic\Exception\AlphabetNotFoundException;
 use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
+use Worthwelle\Alphonic\Exception\InvalidLocaleException;
+use Worthwelle\Alphonic\Exception\LocaleNotFoundException;
 
 /**
  * Manages a group of Alphabet objects to allow easily converting strings to and from various phonetic alphabets.
@@ -144,10 +146,84 @@ class Alphonic {
     /**
      * Retrieves all of the loaded alphabets.
      *
-     * @return array the array of alphabet
+     * @return array the array of alphabets
      */
     public function get_alphabets() {
         return $this->alphabets;
+    }
+
+    /**
+     * Find the closest matching locale from the given alphabet.
+     *
+     * @param string $alpha     the reference code for the desired alphabet
+     * @param string $locale    the reference code for the desired l
+     * @param string $sideshift whether to find a match in different locales in the same language
+     *
+     * @return string the closest matching locale
+     */
+    public function locale_search($alpha, $locale, $sideshift = false) {
+        if ($locale == '') {
+            return '';
+        }
+        $locales = array_map('Worthwelle\Alphonic\Alphabet::format_locale', $this->alphabet($alpha)->get_locales());
+        $locale = Alphabet::format_locale($locale);
+
+        if (in_array($locale, $locales)) {
+            return $locale;
+        }
+        $split = explode('-', $locale);
+
+        switch (count($split)) {
+            case 1:
+                $language = $split[0];
+                $territory = null;
+                break;
+            case 2:
+                list($language, $territory) = $split;
+                break;
+            case 3:
+                $language = $split[0];
+                $territory = $split[1] . '-' . $split[2];
+                break;
+            default:
+                throw new InvalidLocaleException("$locale is not a valid locale");
+        }
+
+        if ($territory != null) {
+            if ($sideshift) {
+                $related = $this->find_language_locales($locales, $language);
+
+                return Alphabet::format_locale($related[0]);
+            }
+            if (in_array($language, $locales)) {
+                return $language;
+            }
+        }
+
+        if (in_array('*', $locales)) {
+            return '*';
+        }
+
+        throw new LocaleNotFoundException("Locale $locale was not found in $alpha");
+    }
+
+    /**
+     * Search for locales within a given language
+     *
+     * @param string $locales  the list of locale reference codes to search
+     * @param string $language the reference code for the desired language
+     *
+     * @return array an array of matching locale reference codes
+     */
+    public function find_language_locales($haystack, $language) {
+        $matches = array();
+        foreach ($haystack as $locale) {
+            if (strpos($locale, $language) === 0) {
+                $matches[] = $locale;
+            }
+        }
+
+        return $matches;
     }
 
     /**
@@ -160,7 +236,9 @@ class Alphonic {
      *
      * @return string the phonetic representation of the given string
      */
-    public function phonetify($string, $alpha, $locale = '*', $return_missing = false) {
+    public function phonetify($string, $alpha, $locale = '', $return_missing = false) {
+        $locale = $this->locale_search($alpha, $locale);
+
         return $this->alphabet($alpha)->phonetify($string, $locale, $return_missing);
     }
 
@@ -174,7 +252,9 @@ class Alphonic {
      *
      * @return string the string of the given phonetic representation
      */
-    public function unphonetify($string, $alpha, $locale = '*', $return_missing = false) {
+    public function unphonetify($string, $alpha, $locale = '', $return_missing = false) {
+        $locale = $this->locale_search($alpha, $locale);
+
         return $this->alphabet($alpha)->unphonetify($string, $locale, $return_missing);
     }
 

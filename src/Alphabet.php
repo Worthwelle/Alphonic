@@ -10,6 +10,7 @@
 namespace Worthwelle\Alphonic;
 
 use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
+use Worthwelle\Alphonic\Exception\InvalidLocaleException;
 
 /**
  * Represents an alphabet as defined in the Alphony phonetic alphabet schema and the encoding/decoding (phonification/unphonification) of strings for a particular alphabet.
@@ -100,16 +101,17 @@ class Alphabet {
         }
 
         $this->code = mb_strtoupper($json->code);
-        $default_locale = isset($json->default_locale) ? $json->default_locale : '*';
+        $default_locale = Alphabet::format_locale(isset($json->default_locale) ? $json->default_locale : '*');
         $alphabets = $this->localize_object($json->alphabets, $default_locale);
         foreach ($alphabets as $locale => $alphabet) {
+            $locale = Alphabet::format_locale($locale);
             if (!isset($this->default_locale)) {
                 $this->default_locale = $locale;
             }
             $this->add_symbols($alphabet, $locale);
         }
         if (isset($json->default_locale) && $this->has_locale($json->default_locale)) {
-            $this->default_locale = $json->default_locale;
+            $this->default_locale = Alphabet::format_locale($json->default_locale);
         } elseif ($this->has_locale('*')) {
             $this->default_locale = '*';
         }
@@ -184,6 +186,28 @@ class Alphabet {
     }
 
     /**
+     * Normalize the locale reference code format.
+     *
+     * @param string $locale the reference code for the desired locale
+     *
+     * @return string the normalized locale reference code
+     */
+    public static function format_locale($locale) {
+        $split = explode('-', $locale);
+
+        switch (count($split)) {
+            case 1:
+                return strtolower($split[0]);
+            case 2:
+                return strtolower($split[0]) . '-' . strtoupper($split[1]);
+            case 3:
+                return strtolower($split[0]) . '-' . ucfirst(strtolower($split[1])) . '-' . strtoupper($split[2]);
+            default:
+                throw new InvalidLocaleException("$locale is not a valid locale");
+        }
+    }
+
+    /**
      * Checks if a locale exists in the alphabet.
      *
      * @param string $locale the reference code for the desired locale
@@ -191,6 +215,8 @@ class Alphabet {
      * @return bool the existence of the given locale
      */
     public function has_locale($locale) {
+        $locale = Alphabet::format_locale($locale);
+
         return isset($this->alphabet[$locale]);
     }
 
@@ -290,13 +316,15 @@ class Alphabet {
             $return = false;
             $ran = false;
             foreach ($locale as $loc) {
-                $return = $this->add_symbol($symbol, $representation, $loc, $overwrite);
-                if (!$return) {
+                try {
+                    $return = $this->add_symbol($symbol, $representation, $loc, $overwrite);
+                } catch (InvalidAlphabetException $e) {
                     if ($ran) {
+                        // if it fails for one, it probably fails for more. Either way we may end up in an inconsistent state if it ran successfully once.
                         throw new InvalidAlphabetException('Inconsistent state in ' . $this->code . ': ' . $symbol . ' added to locales ' . implode(',', $locale) . ' failed in ' . $loc . ' after succeeding in previous locales.');
                     }
 
-                    return $return; // if it fails for one, it probably fails for more. Either way we may end up in an inconsistent state.
+                    return false;
                 }
                 $ran = true;
             }

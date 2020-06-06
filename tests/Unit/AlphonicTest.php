@@ -28,6 +28,8 @@ class AlphonicTest extends TestCase {
         $structure = array(
             'alphabets' => array(
                 'nato.json'    => '{"code": "NATO","title": {"en": "NATO Phonetic Alphabet"},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}}}',
+                'sideshift.json' => '{"code": "LOCALES","alphabets": {"en-GB": {"A": "Alfa", "B": "Bravo"}, "en-CA": {"A": "Alfa", "B": "Bravo"}}}',
+                'wildcard.json' => '{"code": "WILDCARD","alphabets": {"*": {"A": "Alpha", "B": "Bravo"}, "en-GB": {"A": "Alfa", "B": "Bravo"}, "en-CA": {"A": "Alfa", "B": "Bravo"}}}'
             ),
             'alphabets_alt' => array(
                 'nato2.json'    => '{"code": "NATO2","title": {"en": "NATO Phonetic Alphabet"},"description": "A test alphabet.","source": "http://www.worthwelle.com","alphabets": {"en": {"A": "Alfa","B": "Bravo","C": "Charlie","D": "Delta","E": "Echo","F": "Foxtrot","G": "Golf","H": "Hotel","I": "India","J": "Juliett","K": "Kilo","L": "Lima","M": "Mike","N": "November","O": "Oscar","P": "Papa","Q": "Quebec","R": "Romeo","S": "Sierra","T": "Tango","U": "Uniform","V": "Victor","W": "Whiskey","X": "Xray","Y": "Yankee","Z": "Zulu","1": "One","2": "Two","3": "Three","4": "Four","5": "Five","6": "Six","7": "Seven","8": "Eight","9": "Niner","0": "Zero"}}}',
@@ -252,6 +254,86 @@ class AlphonicTest extends TestCase {
     }
 
     /**
+     * Search for an invalid locale.
+     *
+     * @return void
+     */
+    public function testSearchingInvalidLocale() {
+        $this->expectException('\Worthwelle\Alphonic\Exception\InvalidLocaleException');
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/nato.json');
+        $alphonic->locale_search('NATO', 'en-en-en-en');
+    }
+
+    /**
+     * Search for a locale that matches exactly.
+     *
+     * @return void
+     */
+    public function testSearchingExactLocale() {
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/nato.json');
+        $this->assertEquals($alphonic->locale_search('NATO', 'en'), 'en');
+    }
+
+    /**
+     * Search for a locale that doesn't match, but has a parent locale. (ex: de-DE => de)
+     *
+     * @return void
+     */
+    public function testSearchingLocaleMatchingUmbrella() {
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/nato.json');
+        $this->assertEquals($alphonic->locale_search('NATO', 'en-US'), 'en');
+    }
+
+    /**
+     * Search for a locale that doesn't match, but sideshifts to a different locale in the same language. (ex: de-DE => de-AT)
+     *
+     * @return void
+     */
+    public function testSearchingSideshiftedLocale() {
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/sideshift.json');
+        $this->assertEquals($alphonic->locale_search('LOCALES', 'en-US', true), 'en-CA');
+    }
+
+    /**
+     * Search for a locale that is completely missing, but the alphabet has a wildcard locale.
+     *
+     * @return void
+     */
+    public function testSearchingMissingLocaleWithWildcard() {
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/wildcard.json');
+        $this->assertEquals($alphonic->locale_search('WILDCARD', 'uz-Cyrl-UZ'), '*');
+    }
+
+    /**
+     * Search for a locale that is completely missing and the alphabet doesn't have a wildcard locale.
+     *
+     * @return void
+     */
+    public function testSearchingMissingLocaleWithoutWildcard() {
+        $this->expectException('\Worthwelle\Alphonic\Exception\LocaleNotFoundException');
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/sideshift.json');
+        $alphonic->locale_search('LOCALES', 'en-US');
+    }
+
+    /**
+     * Search for an umbrella locale in an alphabet that only has child locales. (ex: de =/> de-DE)
+     *
+     * @return void
+     */
+    public function testSearchingUmbrellaLocaleWithOnlyChildren() {
+        $this->expectException('\Worthwelle\Alphonic\Exception\LocaleNotFoundException');
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/sideshift.json');
+        $alphonic->locale_search('LOCALES', 'en');
+    }
+
+    /**
      * Encode (phonetify) a standard string using a given alphabet.
      *
      * @return void
@@ -271,6 +353,28 @@ class AlphonicTest extends TestCase {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_object($this->getMockNato('unphonetify', 'TESTING'));
         $this->assertEquals($alphonic->unphonetify('Tango Echo Sierra Tango India November Golf', 'nato'), 'TESTING');
+    }
+
+    /**
+     * Encode (phonetify) a standard string using a given alphabet using a non-default locale.
+     *
+     * @return void
+     */
+    public function testPhonetifyStringWithNondefault() {
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/wildcard.json');
+        $this->assertEquals($alphonic->phonetify('AB', 'WILDCARD', 'en-GB'), 'Alfa Bravo');
+    }
+
+    /**
+     * Decode (unphonetify) a standard string using a given alphabet using a non-default locale.
+     *
+     * @return void
+     */
+    public function testUnphonetifyStringWithNondefault() {
+        $alphonic = new Alphonic();
+        $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/wildcard.json');
+        $this->assertEquals($alphonic->unphonetify('Alfa Bravo', 'WILDCARD', 'en-GB'), 'AB');
     }
 
     /**

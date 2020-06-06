@@ -42,6 +42,17 @@ class ExceptionsTest extends TestCase {
      *
      * @return void
      */
+    public function testLocaleNotFoundException() {
+        $exception = new InvalidLocaleException('Locale not found');
+        $this->assertInstanceOf("Worthwelle\Alphonic\Exception\InvalidLocaleException", $exception);
+        $this->assertSame('Locale not found', $exception->getMessage());
+    }
+
+    /**
+     * Construct an InvalidLocaleException.
+     *
+     * @return void
+     */
     public function testInvalidLocaleException() {
         $exception = new InvalidLocaleException('Invalid locale');
         $this->assertInstanceOf("Worthwelle\Alphonic\Exception\InvalidLocaleException", $exception);

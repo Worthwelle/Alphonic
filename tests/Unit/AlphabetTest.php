@@ -159,7 +159,30 @@ class AlphabetTest extends TestCase {
         $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->add_symbol(')', 'Alfa', '');
-        print_r($alpha);
+    }
+
+    /**
+     * Convert an alphabet to case-sensitive and add a symbol that causes a case mismatch conflict.
+     *
+     * @return void
+     */
+    public function testAddCaseSensitiveSymbol() {
+        $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
+        $alpha->set_case_sensitivity(true);
+        $alpha->add_symbol('a', 'Alfa');
+    }
+
+    /**
+     * Convert an alphabet to case-sensitive and add a symbol that causes a letter mismatch conflict.
+     *
+     * @return void
+     */
+    public function testAddCaseSensitiveSymbolWithRepresentationConflict() {
+        $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
+        $alpha->set_case_sensitivity(true);
+        $alpha->add_symbol('B', 'Alfa');
     }
 
     /**
@@ -213,16 +236,40 @@ class AlphabetTest extends TestCase {
     }
 
     /**
+     * Add a symbol to multiple locales in the same alphabet in a way that causes the first locale to fail and verify that an exception is thrown.
+     *
+     * @depends testLoadMultipleLocaleAlphabet
+     *
+     * @return void
+     */
+    public function testAddSymbolToMultipleLocalesInconsistentlyFailFirst() {
+        $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/two_locale_alpha.json')));
+        $alpha->add_symbol(';', 'Colon', array('en', '*'));
+    }
+
+    /**
      * Add a symbol to multiple locales in the same alphabet in a way that causes the second locale to fail and verify that an exception is thrown.
      *
      * @depends testLoadMultipleLocaleAlphabet
      *
      * @return void
      */
-    public function testAddSymbolToMultipleLocalesInconsistently() {
+    public function testAddSymbolToMultipleLocalesInconsistentlyFailAfterFirst() {
         $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/two_locale_alpha.json')));
         $alpha->add_symbol(';', 'Colon', array('en', '*'));
+    }
+
+    /**
+     * Test to ensure locale codes are normalized correctly.
+     *
+     * @return void
+     */
+    public function testLocaleNormalization() {
+        $this->assertEquals(Alphabet::format_locale('eN'), 'en');
+        $this->assertEquals(Alphabet::format_locale('eN-Us'), 'en-US');
+        $this->assertEquals(Alphabet::format_locale('Uz-cyRl-uZ'), 'uz-Cyrl-UZ');
     }
 
     /**
