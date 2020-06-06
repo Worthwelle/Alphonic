@@ -12,6 +12,7 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Worthwelle\Alphonic\Exception\AlphabetNotFoundException;
 use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
+use Worthwelle\Alphonic\Exception\InvalidLocaleException;
 
 class ExceptionsTest extends TestCase {
     /**
@@ -34,5 +35,16 @@ class ExceptionsTest extends TestCase {
         $exception = new InvalidAlphabetException('Mismatched symbols');
         $this->assertInstanceOf("Worthwelle\Alphonic\Exception\InvalidAlphabetException", $exception);
         $this->assertSame('Mismatched symbols', $exception->getMessage());
+    }
+
+    /**
+     * Construct an InvalidLocaleException.
+     *
+     * @return void
+     */
+    public function testInvalidLocaleException() {
+        $exception = new InvalidLocaleException('Invalid locale');
+        $this->assertInstanceOf("Worthwelle\Alphonic\Exception\InvalidLocaleException", $exception);
+        $this->assertSame('Invalid locale', $exception->getMessage());
     }
 }
