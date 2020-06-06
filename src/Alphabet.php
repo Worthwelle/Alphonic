@@ -497,6 +497,27 @@ class Alphabet {
     }
 
     /**
+     * Get the locales of the alphabet
+     *
+     * @return array the locales of the alphabet
+     */
+    public function get_locales() {
+        $locales = array_keys($this->alphabet);
+        sort($locales);
+
+        return $locales;
+    }
+
+    /**
+     * Get the default locale of the alphabet
+     *
+     * @return string the default locale of the alphabet
+     */
+    public function get_default_locale() {
+        return $this->default_locale;
+    }
+
+    /**
      * Encode (phonetify) a string into its phonetic representation.
      *
      * @param string $string         the string to encode

@@ -238,6 +238,30 @@ class AlphabetTest extends TestCase {
     }
 
     /**
+     * Test retrieving the locales form an alphabet.
+     *
+     * @depends testLoadMultipleLocaleAlphabet
+     *
+     * @return void
+     */
+    public function testGetLocales() {
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/two_locale_alpha.json')));
+        $this->assertEquals($alpha->get_locales(), array('*', 'en'));
+    }
+
+    /**
+     * Test retrieving the default locale form an alphabet.
+     *
+     * @depends testLoadMultipleLocaleAlphabet
+     *
+     * @return void
+     */
+    public function testGetDefaultLocale() {
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/two_locale_alpha.json')));
+        $this->assertEquals($alpha->get_default_locale(), '*');
+    }
+
+    /**
      * Test converting a letter to its phonetic representation
      *
      * @depends testLoadAlphabet

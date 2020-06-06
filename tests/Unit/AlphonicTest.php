@@ -57,6 +57,14 @@ class AlphonicTest extends TestCase {
             ->will($this->returnValue(true));
 
         $alpha->expects($this->any())
+            ->method('get_locales')
+            ->will($this->returnValue(array('*', 'en')));
+
+        $alpha->expects($this->any())
+            ->method('get_default_locale')
+            ->will($this->returnValue('*'));
+
+        $alpha->expects($this->any())
             ->method('localize_object')
             ->will($this->returnValue((object) array(
                 'en' => array(
