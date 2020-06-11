@@ -4,7 +4,7 @@
     "description": "A library for converting strings into and from phonetic spellings for use over the phone, a radio or other unclear communications channels. Alphonic provides these conversions not only using the standard NATO alphabet, but also various other phonetic alphabets, making it perfect for easily converting strings with historical accuracy.",
     "license": "GPL-3.0-or-later",
     "homepage": "https://worthwelle.com",
-    "keywords": ["phonetic", "tool", "generator", "alphabet", "dictionary", "encode", "decode", "international phonetic alphabet"],
+    "keywords": ["phonetic", "tool", "generator", "alphabet", "dictionary", "encode", "decode", "international spelling alphabet"],
     "support": {
         "issues": "https://github.com/Worthwelle/Alphonic/issues",
         "source": "https://github.com/Worthwelle/Alphonic"
@@ -22,7 +22,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.2.20",
-        "phpunit/phpunit": "^4.8.35 || ^5.7",
+        "phpunit/phpunit": "^4.8.35 || ^5.7 || ^9.2",
         "mikey179/vfsstream": "^1.5.0"
     },
     "autoload": {
