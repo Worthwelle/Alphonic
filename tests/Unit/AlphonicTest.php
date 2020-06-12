@@ -144,7 +144,7 @@ class AlphonicTest extends TestCase {
     public function testLoadAlphabets() {
         $alphonic = new Alphonic();
         $alphonic->load_alphabets();
-        $this->assertContains('NATO Phonetic Alphabet', $alphonic->get_title('nato'));
+        $this->assertContains('NATO Phonetic Alphabet', $alphonic->get_title('Alphonic-NATO'));
     }
 
     /**
@@ -166,7 +166,7 @@ class AlphonicTest extends TestCase {
     public function testLoadAlphabetsFromDirectory() {
         $alphonic = new Alphonic();
         $alphonic->load_alphabets($this->root->url() . '/alphabets');
-        $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
+        $this->assertEquals($alphonic->get_title('TESTALPHA'), 'NATO Phonetic Alphabet');
     }
 
     /**
@@ -199,7 +199,7 @@ class AlphonicTest extends TestCase {
     public function testAddAlphabetFromObjectAndGetTitle() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_object($this->getMockNato('get_title', 'NATO Phonetic Alphabet'));
-        $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
+        $this->assertEquals($alphonic->get_title('TESTALPHA'), 'NATO Phonetic Alphabet');
     }
 
     /**
@@ -212,7 +212,7 @@ class AlphonicTest extends TestCase {
     public function testAddAlphabetFromJSON() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_json(file_get_contents($this->root->url() . '/alphabets/nato.json'));
-        $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
+        $this->assertEquals($alphonic->get_title('TESTALPHA'), 'NATO Phonetic Alphabet');
     }
 
     /**
@@ -223,7 +223,7 @@ class AlphonicTest extends TestCase {
     public function testAddAlphabetFromFile() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/nato.json');
-        $this->assertEquals($alphonic->get_title('nato'), 'NATO Phonetic Alphabet');
+        $this->assertEquals($alphonic->get_title('TESTALPHA'), 'NATO Phonetic Alphabet');
     }
 
     /**
@@ -235,7 +235,7 @@ class AlphonicTest extends TestCase {
         $this->expectException('\Worthwelle\Alphonic\Exception\InvalidLocaleException');
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/nato.json');
-        $alphonic->locale_search('NATO', 'en-en-en-en');
+        $alphonic->locale_search('TESTALPHA', 'en-en-en-en');
     }
 
     /**
@@ -246,7 +246,7 @@ class AlphonicTest extends TestCase {
     public function testSearchingExactLocale() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/nato.json');
-        $this->assertEquals($alphonic->locale_search('NATO', 'en'), 'en');
+        $this->assertEquals($alphonic->locale_search('TESTALPHA', 'en'), 'en');
     }
 
     /**
@@ -257,7 +257,7 @@ class AlphonicTest extends TestCase {
     public function testSearchingLocaleMatchingUmbrella() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_file($this->root->url() . '/alphabets/nato.json');
-        $this->assertEquals($alphonic->locale_search('NATO', 'en-US'), 'en');
+        $this->assertEquals($alphonic->locale_search('TESTALPHA', 'en-US'), 'en');
     }
 
     /**
@@ -314,7 +314,7 @@ class AlphonicTest extends TestCase {
     public function testPhonetifyString() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_object($this->getMockNato('phonetify', 'Tango Echo Sierra Tango India November Golf'));
-        $this->assertEquals($alphonic->phonetify('Testing', 'nato'), 'Tango Echo Sierra Tango India November Golf');
+        $this->assertEquals($alphonic->phonetify('Testing', 'TESTALPHA'), 'Tango Echo Sierra Tango India November Golf');
     }
 
     /**
@@ -325,7 +325,7 @@ class AlphonicTest extends TestCase {
     public function testUnphonetifyString() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_object($this->getMockNato('unphonetify', 'TESTING'));
-        $this->assertEquals($alphonic->unphonetify('Tango Echo Sierra Tango India November Golf', 'nato'), 'TESTING');
+        $this->assertEquals($alphonic->unphonetify('Tango Echo Sierra Tango India November Golf', 'TESTALPHA'), 'TESTING');
     }
 
     /**
@@ -369,7 +369,7 @@ class AlphonicTest extends TestCase {
     public function testGetDescription() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_object($this->getMockNato('get_description', 'Mock description'));
-        $this->assertEquals($alphonic->get_description('nato'), 'Mock description');
+        $this->assertEquals($alphonic->get_description('TESTALPHA'), 'Mock description');
     }
 
     /**
@@ -391,7 +391,7 @@ class AlphonicTest extends TestCase {
     public function testGetSource() {
         $alphonic = new Alphonic();
         $alphonic->add_alphabet_from_object($this->getMockNato('get_source', 'https://www.worthwelle.com/'));
-        $this->assertEquals($alphonic->get_source('nato'), 'https://www.worthwelle.com/');
+        $this->assertEquals($alphonic->get_source('TESTALPHA'), 'https://www.worthwelle.com/');
     }
 
     /**

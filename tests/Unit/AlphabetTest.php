@@ -20,7 +20,7 @@ class AlphabetTest extends TestCase {
      */
     public function testLoadAlphabet() {
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
-        $this->assertEquals($alpha->code, 'NATO');
+        $this->assertEquals($alpha->code, 'TESTALPHA');
     }
 
     /**
@@ -33,7 +33,7 @@ class AlphabetTest extends TestCase {
      */
     public function testLoadAlphabetFromJSON() {
         $alpha = Alphabet::from_json(file_get_contents($this->root->url() . '/alphabets/nato.json'));
-        $this->assertEquals($alpha->get_code(), 'NATO');
+        $this->assertEquals($alpha->get_code(), 'TESTALPHA');
     }
 
     /**
@@ -45,7 +45,7 @@ class AlphabetTest extends TestCase {
      */
     public function testLoadAlphabetFromFile() {
         $alpha = Alphabet::from_file($this->root->url() . '/alphabets/nato.json');
-        $this->assertEquals($alpha->get_code(), 'NATO');
+        $this->assertEquals($alpha->get_code(), 'TESTALPHA');
     }
 
     /**
