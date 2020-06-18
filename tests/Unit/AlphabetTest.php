@@ -183,6 +183,17 @@ class AlphabetTest extends TestCase {
     }
 
     /**
+     * Add a symbol and representation that match an existing one.
+     *
+     * @return void
+     */
+    public function testAddExactlyMatchingSymbol() {
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
+        $alpha->set_case_sensitivity(true);
+        $this->assertEquals($alpha->add_symbol('A', 'Alfa'), true);
+    }
+
+    /**
      * Add a symbol to one locale but not another and ensure that it is used in converting only in that one locale.
      *
      * @depends testLoadMultipleLocaleAlphabet
@@ -218,9 +229,8 @@ class AlphabetTest extends TestCase {
      * @return void
      */
     public function testAddSymbolToMultipleLocalesInconsistentlyFailFirst() {
-        $this->expectException('\Worthwelle\Alphonic\Exception\InvalidAlphabetException');
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/two_locale_alpha.json')));
-        $alpha->add_symbol(';', 'Colon', array('en', '*'));
+        $this->assertEquals($alpha->add_symbol(';', 'Colon', array('*', 'en')), false);
     }
 
     /**
@@ -491,5 +501,36 @@ class AlphabetTest extends TestCase {
         $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
         $alpha->add_symbol('N', 'New York');
         $this->assertEquals($alpha->unphonetify('New York Alfa Tango Oscar'), 'NATO');
+    }
+
+    /**
+     * Get the description from an alphabet.
+     *
+     * @return void
+     */
+    public function testGetDescription() {
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
+        $this->assertEquals($alpha->get_description(), 'A test alphabet.');
+    }
+
+    /**
+     * Get the description from an alphabet with a missing locale.
+     *
+     * @return void
+     */
+    public function testGetMissingLocaleDescription() {
+        $this->expectException('\Worthwelle\Alphonic\Exception\LocaleNotFoundException');
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
+        $this->assertEquals($alpha->get_description('TEST'), 'A test alphabet.');
+    }
+
+    /**
+     * Get the source from an alphabet.
+     *
+     * @return void
+     */
+    public function testGetSource() {
+        $alpha = new Alphabet(json_decode(file_get_contents($this->root->url() . '/alphabets/nato.json')));
+        $this->assertEquals($alpha->get_source(), 'http://www.worthwelle.com');
     }
 }

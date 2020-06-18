@@ -11,7 +11,6 @@ namespace Worthwelle\Alphonic;
 
 use Worthwelle\Alphonic\Exception\AlphabetNotFoundException;
 use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
-use Worthwelle\Alphonic\Exception\InvalidLocaleException;
 use Worthwelle\Alphonic\Exception\LocaleNotFoundException;
 
 /**
@@ -185,8 +184,6 @@ class Alphonic {
                 $language = $split[0];
                 $territory = $split[1] . '-' . $split[2];
                 break;
-            default:
-                throw new InvalidLocaleException("$locale is not a valid locale");
         }
 
         if ($territory != null) {

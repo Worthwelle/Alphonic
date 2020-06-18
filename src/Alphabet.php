@@ -11,6 +11,7 @@ namespace Worthwelle\Alphonic;
 
 use Worthwelle\Alphonic\Exception\InvalidAlphabetException;
 use Worthwelle\Alphonic\Exception\InvalidLocaleException;
+use Worthwelle\Alphonic\Exception\LocaleNotFoundException;
 
 /**
  * Represents an alphabet as defined in the Alphony phonetic alphabet schema and the encoding/decoding (phonification/unphonification) of strings for a particular alphabet.
@@ -172,7 +173,9 @@ class Alphabet {
         // HHVM loads constants defined by extensions under the "Core" key.
         // https://github.com/facebook/hhvm/issues/7402
         if (defined('HHVM_VERSION')) {
+            // @codeCoverageIgnoreStart
             $json_codes = $constants['Core'];
+        // @codeCoverageIgnoreEnd
         } else {
             $json_codes = $constants['json'];
         }
@@ -511,6 +514,10 @@ class Alphabet {
             $locale = $this->default_locale;
         }
         $descriptions = get_object_vars($this->description);
+
+        if (!isset($descriptions[$locale])) {
+            throw new LocaleNotFoundException();
+        }
 
         return $descriptions[$locale];
     }
