@@ -43,9 +43,11 @@ $alphonic->alphabet("NATO")->add_symbol(" ","|");
 $alphonic->alphabet("NATO")->add_symbol(",","Comma");
 $alphonic->alphabet("NATO")->add_symbol("!","Exclamation");
 
-echo $output = $alphonic->phonetify("Holy alphabets, Batman!", "NATO");
-// Hotel Oscar Lima Yankee | Alfa Lima Papa Hotel Alfa Bravo Echo Tango Sierra Comma | Bravo Alfa Tango Mike Alfa November Exclamation
-echo $alphonic->unphonetify($output, "NATO");
+echo $output = $alphonic->phonetify("Holy alphabets, Batman!", "Alphonic-NATO");
+// Hotel Oscar Lima Yankee | Alfa Lima Papa Hotel Alfa Bravo Echo Tango Sierra
+// Comma | Bravo Alfa Tango Mike Alfa November Exclamation
+
+echo $alphonic->unphonetify($output, "Alphonic-NATO");
 // HOLY ALPHABETS, BATMAN!
 ```
 
@@ -63,13 +65,33 @@ $alphonic->load_alphabet_from_json(file_get_contents('myotheralphabet.json');
 $alphonic2 = new Alphonic('directory/full/of/alphabets', true);
 ```
 
-### Configuration Options
+### Use localized Alphabets
 
+Alphonic supports alphabets with multiple locales, such as that defined in the [General Radiotelegraph Regulations][ccir1927] of 1927, which is defined with localized spellings for both English and French.
 
+```php
+<?php
+
+$alphonic = new Alphonic();
+$alphonic->load_alphabets();
+
+echo $fr = $alphonic->phonetify("Holy alphabets, Batman!", "Alphonic-CCIR1927", "fr");
+// Hanovre Ontario Liverpool Yokohama Amsterdam Liverpool Portugal Hanovre
+// Amsterdam Baltimore Eddiston Tokio Santiago Baltimore Amsterdam Tokio
+// Madagascar Amsterdam Neuchâtel
+
+echo $en = $alphonic->phonetify("Holy alphabets, Batman!", "Alphonic-CCIR1927", "en");
+// Hanover Ontario Liverpool Yokohama Amsterdam Liverpool Portugal Hanover
+// Amsterdam Baltimore Eddystone Tokio Santiago Baltimore Amsterdam Tokio
+// Madagascar Amsterdam Neufchatel
+
+echo $alphonic->unphonetify($fr, "Alphonic-CCIR1927", "fr");
+echo $alphonic->unphonetify($en, "Alphonic-CCIR1927", "en");
+// HOLYALPHABETSBATMAN
+```
 
 ## Known Issues
 
-* Localizations are currently not supported and alphabets require titles and symbols utilizing the "en" localization.
 * During early development the JSON schema is likely to change without notice. Once v1.0 is formalized, this will become the standard going forward.
 
 ## Running the tests
@@ -121,3 +143,5 @@ Currently supported alphabets:
 | `USN1938` | U.S. Navy (1938) |
 | `USNWW2` | U.S. Navy World War II |
 | `WU1918` | Western Union (1918) |
+
+[ccir1927]: alphabets/ccir1927.json
