@@ -300,7 +300,7 @@ class Alphabet {
     }
 
     /**
-     * Adds a single symbol to the alphabet.
+     * Adds a symbol to an array of locales in the alphabet.
      *
      * @param string       $symbol         the symbol to add to the alphabet
      * @param string       $representation the phonetic representation of the symbol provided
@@ -309,39 +309,34 @@ class Alphabet {
      *
      * @return bool whether or not the symbol was successfully added
      */
-    public function add_symbol($symbol, $representation, $locale = '', $overwrite = true) {
-        if ($locale == '') {
-            if (isset($this->default_locale)) {
-                $locale = $this->default_locale;
-            }
-        }
-        if (is_array($locale)) {
-            $return = false;
-            $ran = false;
-            foreach ($locale as $loc) {
-                try {
-                    $return = $this->add_symbol($symbol, $representation, $loc, $overwrite);
-                } catch (InvalidAlphabetException $e) {
-                    if ($ran) {
-                        // if it fails for one, it probably fails for more. Either way we may end up in an inconsistent state if it ran successfully once.
-                        throw new InvalidAlphabetException('Inconsistent state in ' . $this->code . ': ' . $symbol . ' added to locales ' . implode(',', $locale) . ' failed in ' . $loc . ' after succeeding in previous locales.');
-                    }
-
-                    return false;
+    public function add_symbol_to_locales($symbol, $representation, $locales, $overwrite = true) {
+        $return = false;
+        $ran = false;
+        foreach ($locales as $loc) {
+            try {
+                $return = $this->add_symbol($symbol, $representation, $loc, $overwrite);
+            } catch (InvalidAlphabetException $e) {
+                if ($ran) {
+                    // if it fails for one, it probably fails for more. Either way we may end up in an inconsistent state if it ran successfully once.
+                    throw new InvalidAlphabetException('Inconsistent state in ' . $this->code . ': ' . $symbol . ' adding to locales ' . implode(',', $locales) . ' failed in ' . $loc . ' after succeeding in previous locales.');
                 }
-                $ran = true;
+
+                return false;
             }
-
-            return $return;
-        }
-        // if the alphabet is not case-sensitive, force the symbol to uppercase to choose a standard case
-        if (!$this->case_sensitive) {
-            $symbol = mb_strtoupper($symbol);
-        }
-        if (!$overwrite && isset($this->alphabet[$locale][$symbol])) {
-            return false;
+            $ran = true;
         }
 
+        return $return;
+    }
+
+    /**
+     * Adds a single symbol to the alphabet.
+     *
+     * @param string $symbol         the symbol to add to the alphabet
+     * @param string $representation the phonetic representation of the symbol provided
+     * @param string $locale         the reference code for the desired locale
+     */
+    private function symbol_mismatched($symbol, $representation, $locale) {
         $mismatched = false;
         $mismatched_symbol = null;
         if (!isset($this->unalphabet[$locale])) {
@@ -376,8 +371,43 @@ class Alphabet {
         if ($mismatched) {
             throw new InvalidAlphabetException('Mismatched symbols in ' . $this->code . ': ' . $symbol . ' = ' . $mismatched_symbol);
         }
+    }
+
+    /**
+     * Adds a single symbol to the alphabet.
+     *
+     * @param string       $symbol         the symbol to add to the alphabet
+     * @param string       $representation the phonetic representation of the symbol provided
+     * @param string|array $locale         the reference code for the desired locale or an array thereof
+     * @param bool         $overwrite      whether or not to overwrite an existing symbol
+     *
+     * @return bool whether or not the symbol was successfully added
+     */
+    public function add_symbol($symbol, $representation, $locale = '', $overwrite = true) {
+        if ($locale == '') {
+            if (isset($this->default_locale)) {
+                $locale = $this->default_locale;
+            }
+        }
+
+        if (is_array($locale)) {
+            return $this->add_symbol_to_locales($symbol, $representation, $locale, $overwrite);
+        }
 
         $representation = $this->clean_whitespace($representation);
+
+        // if the alphabet is not case-sensitive, force the symbol to uppercase to choose a standard case
+        if (!$this->case_sensitive) {
+            $symbol = mb_strtoupper($symbol);
+        }
+        // if the symbol exists and $overwrite is false, stop processing
+        if (!$overwrite && isset($this->alphabet[$locale][$symbol])) {
+            return false;
+        }
+
+        // if symbols mismatch, we pass on the exception; otherwise the return is irrelevant
+        $this->symbol_mismatched($symbol, $representation, $locale);
+
         $count = count(explode(' ', $representation));
         $this->alphabet[$locale][$symbol] = $representation;
         if ($count > 1) {
