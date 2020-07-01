@@ -47,6 +47,6 @@ notifications:
     channels:
       - "irc.freenode.org#Worthwelle"
     template: 
-      - "%{repository_slug}#%{build_number} %{result} (%{branch} - %{commit} - %{elapsed_time}): %{commit_subject}   %{build_url}"
+      - "%{repository_name}#%{build_number} %{result} (%{branch}@%{commit}, %{elapsed_time}): %{commit_subject}   %{build_url}"
     on_success: always
     on_failure: always
