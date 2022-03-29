@@ -45,7 +45,7 @@ script:
 notifications:
   irc:
     channels:
-      - "irc.freenode.org#Worthwelle"
+      - "irc.ircstorm.net#Worthwelle"
     template: 
       - "%{repository_name}#%{build_number} %{result} (%{branch}@%{commit}, %{elapsed_time}): %{commit_subject}   %{build_url}"
     on_success: always
